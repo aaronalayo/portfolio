@@ -12,8 +12,8 @@ dist
 dist-ssr
 *.local
 .sanity
-/cms/.sanity
-/cms/node_modules
+/cms/.sanity/
+/cms/node_modules/
 
 # Editor directories and files
 .vscode/*
