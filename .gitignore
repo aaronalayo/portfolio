@@ -13,7 +13,7 @@ dist-ssr
 *.local
 .sanity
 /cms/.sanity
-node_modules
+/cms/node_modules
 
 # Editor directories and files
 .vscode/*
