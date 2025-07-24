@@ -6,7 +6,7 @@ const ContactSection = () => (
       Contact
     </h2>
 
-    <form className="w-full max-w-[28rem] bg-gray-800 rounded-xl p-6 shadow-md space-y-5">
+    <form className="w-full max-w-[36rem] bg-gray-800 rounded-xl p-6 shadow-md space-y-5">
       <div>
         <label htmlFor="name" className="block text-sm text-gray-300 mb-1">
           Name
@@ -40,7 +40,7 @@ const ContactSection = () => (
         <textarea
           id="message"
           name="message"
-          rows={4}
+          rows={6}
           className="w-full px-3 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
           required
         ></textarea>

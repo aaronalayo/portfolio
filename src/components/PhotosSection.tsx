@@ -8,6 +8,7 @@ const urlFor = (source: any) => builder.image(source);
 interface Photo {
   _id: string;
   title: string;
+  category: string;
   image: {
     asset: {
       url: string;
@@ -17,7 +18,9 @@ interface Photo {
 
 const PhotosSection = () => {
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+  const [groupedPhotos, setGroupedPhotos] = useState<{ [category: string]: Photo[] }>({});
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
   useEffect(() => {
     sanityClient
@@ -25,6 +28,7 @@ const PhotosSection = () => {
         `*[_type == "photo"]{
           _id,
           title,
+          category,
           image {
             asset -> {
               url
@@ -32,100 +36,151 @@ const PhotosSection = () => {
           }
         }`
       )
-      .then((data: Photo[]) => setPhotos(data))
+      .then((data: Photo[]) => {
+        setPhotos(data);
+        const grouped = data.reduce((acc, photo) => {
+          const key = photo.category || 'Uncategorized';
+          if (!acc[key]) acc[key] = [];
+          acc[key].push(photo);
+          return acc;
+        }, {} as { [category: string]: Photo[] });
+        setGroupedPhotos(grouped);
+      })
       .catch((err) => console.error('Error fetching photos:', err));
   }, []);
 
+  const openModal = (category: string, index: number) => {
+    setSelectedCategory(category);
+    setSelectedIndex(index);
+  };
+
+  const closeModal = () => {
+    setSelectedCategory(null);
+    setSelectedIndex(0);
+  };
+
+  const handleNext = () => {
+    if (!selectedCategory) return;
+    setSelectedIndex((prev) => (prev + 1) % groupedPhotos[selectedCategory].length);
+  };
+
+  const handlePrev = () => {
+    if (!selectedCategory) return;
+    setSelectedIndex((prev) => (prev - 1 + groupedPhotos[selectedCategory].length) % groupedPhotos[selectedCategory].length);
+  };
+
   return (
-    <section className="min-h-screen bg-white px-4 py-20 flex flex-col items-center z-10">
+    <section style={{margin: '60px'}} className="min-h-screen bg-white px-4 py-20 flex flex-col items-center z-10">
       <h2 className="text-5xl font-extrabold mb-16 text-center uppercase tracking-tight text-blue-900 drop-shadow-sm">
         PHOTOS
       </h2>
-
-      {/* Responsive flex layout with spacing */}
-      <style>{`
-        .photo-item {
-          flex: 0 0 calc((100% / 5) - 16px);
-          margin: 8px;
-        }
-
-        @media (max-width: 1280px) {
-          .photo-item {
-            flex: 0 0 calc((100% / 4) - 16px);
-          }
-        }
-
-        @media (max-width: 768px) {
-          .photo-item {
-            flex: 0 0 calc((100% / 2) - 16px);
-          }
-        }
-
-        @media (max-width: 480px) {
-          .photo-item {
-            flex: 0 0 100%;
-          }
-        }
-
-        .fade-in {
-          animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style>
-
-      <div className="flex flex-wrap justify-center w-full max-w-7xl">
-        {photos.map((photo) => (
-          <div
-            key={photo._id}
-            onClick={() => setSelectedPhoto(photo)}
-            className="photo-item cursor-pointer bg-white rounded-lg shadow overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg"
-          >
-            <img
-              src={urlFor(photo.image).width(400).height(200).url()}
-              alt={photo.title}
-              className="w-full h-[200px] object-contain bg-gray-100"
-              loading="lazy"
-            />
-            <h3 className="text-sm text-blue-900 font-semibold text-center p-1 truncate">
-              {photo.title}
-            </h3>
+      {Object.entries(groupedPhotos).map(([category, photos]) => (
+        <div key={category} className="mb-8 w-full max-w-7xl">
+          <h3 className="text-2xl font-bold text-blue-800 uppercase mb-4">{category}</h3>
+          <div style={{gap: '8px'}} className="grid grid-cols-5 sm:grid-cols-3 md:grid-cols-2 xl:grid-cols-5 gap-8 max-w-7xl w-full px-4">
+            {photos.map((photo, index) => (
+              <div
+                key={photo._id}
+                onClick={() => openModal(category, index)}
+                className="cursor-pointer bg-white rounded-lg shadow overflow-hidden hover:scale-105 transition-transform"
+              >
+                <img
+                  src={urlFor(photo.image).width(400).height(200).url()}
+                  alt={photo.title}
+                  className="w-full h-[180px] object-contain bg-gray-100"
+                  loading="lazy"
+                />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
 
       {/* Modal */}
-      {selectedPhoto && (
+      {selectedCategory && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 fade-in"
-          onClick={() => setSelectedPhoto(null)}
+          className="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-md flex items-center justify-center z-50"
+          onClick={closeModal}
         >
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectedPhoto(null);
+          {/* Placeholder Container */}
+          <div
+            style={{
+              backgroundColor: 'rgba(227, 225, 225, 0.82)', // Gray background
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'fixed', // Use fixed positioning to ensure it's relative to the viewport
+              top: '50%', // Center vertically
+              left: '50%', // Center horizontally
+              transform: 'translate(-50%, -50%)', // Adjust for the container's dimensions
+              borderRadius: '10px',
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              width: '80vw',
+              height: '80vh',
             }}
-            aria-label="Close"
-            className="absolute top-6 right-6 text-white text-5xl font-bold z-50 cursor-pointer hover:scale-110 transition-transform"
-            style={{ background: 'transparent', border: 'none' }}
+  
           >
-            &times;
-          </button>
+            {/* Prev Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePrev();
+              }}
+              style={{
+                position: 'absolute',
+                left: '-3rem', // Position outside the placeholder
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: '4rem', // Thinner button
+                fontFamily: 'Roboto, Arial, sans-serif', 
+                fontWeight: 100, // Use Helvetica font
+                color: 'white',
+                zIndex: 50,
+                cursor: 'pointer',
+                backgroundColor: 'rgba(71, 68, 68, 0.7)', // Gray background
+                borderRadius: 'none', // Circular shape
+                padding: '0.5rem', // Space inside the button
+                border: 'none',
+              }}
+              aria-label="Previous"
+            >
+              ‹
+            </button>
 
-          <img
-            src={selectedPhoto.image.asset.url}
-            alt={selectedPhoto.title}
-            className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
-          />
+            {/* Image */}
+            <img
+              src={groupedPhotos[selectedCategory][selectedIndex].image.asset.url}
+              alt={groupedPhotos[selectedCategory][selectedIndex].title}
+              className="max-w-full max-h-full object-contain rounded-lg"
+            />
+
+            {/* Next Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNext();
+              }}
+              style={{
+                position: 'absolute',
+                right: '-3rem', // Position outside the placeholder
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: '4rem', // Thinner button
+                fontFamily: 'Roboto, Arial, sans-serif', // Use Helvetica font
+                color: 'white',
+                zIndex: 50,
+                cursor: 'pointer',
+                backgroundColor: 'rgba(71, 68, 68, 0.7)', // Gray background
+                borderRadius: 'none', // Circular shape
+                padding: '0.5rem', // Space inside the button
+                border: 'none',
+              }}
+              aria-label="Next"
+            >
+              ›
+            </button>
+          </div>
         </div>
       )}
     </section>
