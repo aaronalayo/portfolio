@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import sanityClient from '../sanityClient'
 import imageUrlBuilder from '@sanity/image-url'
-import { PortableText } from '@portabletext/react'
 
 const builder = imageUrlBuilder(sanityClient)
 const urlFor = (source: any) => builder.image(source)
@@ -16,37 +15,35 @@ const AboutSection = () => {
 
   useEffect(() => {
     sanityClient
-      .fetch(
-        `*[_type == "about"][0]{
-          bio,
-          image
-        }`
-      )
-      .then((data) => setAboutData(data))
+      .fetch(`*[_type == "about"][0]{ bio, image }`)
+      .then(setAboutData)
       .catch(console.error)
   }, [])
 
-  if (!aboutData) return <p className="text-center text-white">Loading...</p>
+  if (!aboutData) {
+    return <p className="text-center text-white mt-10">Loading...</p>
+  }
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gray-900 text-white px-6">
-      <div className="flex flex-col items-center justify-center w-full h-full">
-        <h2 className="text-3xl font-bold text-center uppercase mb-8">About Me</h2>
-        <div className="flex flex-row items-center justify-center bg-gray-800 rounded-2xl p-10 shadow-lg max-w-3xl mx-auto">
+    <section className="min-h-screen flex items-center justify-center bg-gray-900 text-white px-4 py-16">
+      <div className="bg-gray-800 border border-gray-700 rounded-xl shadow-lg w-full max-w-[920px] px-10 py-10">
+        <div className="flex items-center gap-10">
+          
           {/* Image */}
-          {aboutData.image && (
-            <img
-              src={urlFor(aboutData.image).width(300).height(300).url()}
-              alt="About me"
-              className="w-64 h-64 object-cover rounded-xl shadow-lg flex-shrink-0 mr-10"
-            />
-          )}
+          <img
+            src={urlFor(aboutData.image).width(400).height(400).url()}
+            alt="About me"
+            className="w-82 h-82 object-cover rounded-xl p-[20px]"
+          />
+
           {/* Text */}
-          <div className="text-gray-300 text-lg leading-relaxed max-w-md w-full space-y-4">
-            {aboutData.bio.split('\n').map((paragraph, idx) => (
-              <p key={idx}>{paragraph.trim()}</p>
+          <div className="text-base text-gray-200 leading-relaxed flex-1">
+            <h2 className="text-2xl font-semibold text-white p-[20px]">About Me</h2>
+            {aboutData.bio.split('\n').map((para, idx) => (
+              <p key={idx} className="mb-3">{para.trim()}</p>
             ))}
           </div>
+
         </div>
       </div>
     </section>
