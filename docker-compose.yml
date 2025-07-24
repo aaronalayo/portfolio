@@ -24,4 +24,4 @@ services:
       - SANITY_STUDIO_PROJECT_ID=or9vpa2z
       - SANITY_STUDIO_DATASET=production
       - NODE_ENV=development
-    command: npx sanity dev  # Correct command to run Sanity Studio in development
+    command: npx sanity dev --host 0.0.0.0  # Correct command to run Sanity Studio in development
