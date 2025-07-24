@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: '0.0.0.0', // ✅ required for Docker
-    port: 3000
+    port: 3000,
+    allowedHosts: ['portfolio-f412.onrender.com', 'localhost'],
   },
 })

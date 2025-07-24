@@ -129,7 +129,6 @@ const PhotosSection = () => {
               }}
               style={{
                 position: 'absolute',
-                left: '-3rem', // Position outside the placeholder
                 top: '50%',
                 transform: 'translateY(-50%)',
                 fontSize: '4rem', // Thinner button
@@ -163,7 +162,6 @@ const PhotosSection = () => {
               }}
               style={{
                 position: 'absolute',
-                right: '-3rem', // Position outside the placeholder
                 top: '50%',
                 transform: 'translateY(-50%)',
                 fontSize: '4rem', // Thinner button
