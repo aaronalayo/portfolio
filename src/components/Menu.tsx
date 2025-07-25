@@ -46,92 +46,49 @@ const Menu = () => {
 
   return (
     <>
-      {/* Star toggle button */}
-      <div className="fixed top-4 left-4 z-100">
+      {/* Toggle button */}
+      <div className="fixed top-4 left-4 z-50">
         <button
-  onClick={() => setOpen(!open)}
-  aria-label={open ? 'Close menu' : 'Open menu'}
-  aria-expanded={open}
-  className="w-12 h-12 flex items-center justify-center bg-transparent rounded-full focus:outline-none focus:ring-0 focus:shadow-none outline-none shadow-none border-none"
->
-  <StarIcon
-    size={108}
-    className={`transform transition-transform duration-500 ease-in-out ${open ? 'rotate-180' : 'rotate-0'}`}
-  />
-</button>
+          onClick={() => setOpen(!open)}
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-expanded={open}
+          className="w-12 h-12 flex items-center justify-center bg-transparent rounded-full focus:outline-none"
+        >
+          <StarIcon
+            size={64}
+            className={`transition-transform duration-500 ${open ? 'rotate-180' : 'rotate-0'}`}
+          />
+        </button>
       </div>
 
-      {/* Menu overlay */}
+      {/* Fullscreen menu overlay */}
       <div
-        aria-hidden={!open}
-        style={{
-          position: 'fixed',
-          inset: 0,
-          backgroundColor: 'rgba(255, 255, 255, 0.57)',
-          backdropFilter: 'blur(15px)',
-          WebkitBackdropFilter: 'blur(15px)',
-          display: open ? 'flex' : 'none',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 50,
-          flexDirection: 'column',
-          paddingTop: '3rem',
-        }}
+        className={`fixed inset-0 z-40 bg-white/60 backdrop-blur-md transition-opacity duration-300 ${
+          open ? 'flex' : 'hidden'
+        } flex-col items-center justify-center`}
       >
         {/* Close button */}
         <button
           onClick={() => setOpen(false)}
           aria-label="Close menu"
-          style={{
-            position: 'absolute',
-            top: '1rem',
-            right: '1rem',
-            backgroundColor: 'transparent',
-            padding: '0.25rem',
-            cursor: 'pointer',
-            zIndex: 60,
-            border: 'none',
-          }}
+          className="absolute top-4 right-4 z-50"
         >
-          <CloseIcon size={48} />
+          <CloseIcon size={40} />
         </button>
 
-        {/* Menu links container */}
-        <div
-          style={{
-            maxWidth: '600px',
-            width: '100%',
-            textAlign: 'center',
-          }}
-        >
-          <nav
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '2rem',
-            }}
-          >
-            {sections.map((section) => (
-              <Link
-                key={section.value}
-                to={`/${section.value}`}
-                onClick={() => setOpen(false)}
-                style={{
-                  fontSize: '4rem',
-                  fontWeight: '800',
-                  textTransform: 'uppercase',
-                  fontFamily: 'Inter, sans-serif',
-                  color: '#000000',
-                  textDecoration: 'none',
-                  cursor: 'pointer',
-                }}
-                className="focus:outline-none focus-visible:outline-0"
-              >
-                {section.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
+        {/* Navigation links */}
+        <nav className="flex flex-col items-center gap-8 text-center">
+          {sections.map((section) => (
+            <Link
+              key={section.value}
+              to={`/${section.value}`}
+              onClick={() => setOpen(false)}
+              className="text-4xl sm:text-6xl font-extrabold uppercase text-black hover:underline transition"
+            >
+              {section.label}
+            </Link>
+          ))}
+        </nav>
       </div>
     </>
   );
