@@ -26,6 +26,10 @@ const ContactSection = () => {
       });
       setSubmitted(true);
       setFormData({ name: '', email: '', message: '' });
+
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 5000);
     } catch (err: any) {
       console.error(err);
       setError('There was a problem sending your message.');
@@ -35,20 +39,33 @@ const ContactSection = () => {
   };
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center bg-white px-4 py-20">
-      <h2 className="text-4xl font-bold mb-10 text-center text-blue-900 uppercase tracking-tight">
+    <section className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-blue-50 px-4 py-20">
+      <h2 className="text-5xl font-extrabold mb-6 text-center text-blue-900 uppercase tracking-tight drop-shadow-sm">
         Contact
       </h2>
 
       {submitted ? (
-        <p className="text-green-700 text-lg font-semibold">Thank you! Your message has been sent. 😊</p>
+        <div className="text-center space-y-4 bg-green-50 p-6 rounded-xl shadow-md border border-green-200">
+          <p className="text-green-700 text-lg font-semibold">
+            Thank you! Your message has been sent. 😊
+          </p>
+          <p className="text-sm text-gray-600">
+            You will be redirected to the homepage shortly...
+          </p>
+          <button
+            onClick={() => (window.location.href = '/')}
+            className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-xl transition shadow-sm"
+          >
+            Go to Homepage
+          </button>
+        </div>
       ) : (
         <form
-          className="w-full max-w-[36rem] bg-gray-800 rounded-xl p-6 shadow-md space-y-5"
+          className="w-full max-w-[36rem] bg-white rounded-3xl p-10 shadow-lg space-y-6"
           onSubmit={handleSubmit}
         >
-          <div>
-            <label htmlFor="name" className="block text-sm text-gray-300 mb-1">
+          <div className="space-y-1">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
               Name
             </label>
             <input
@@ -57,13 +74,13 @@ const ContactSection = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
 
-          <div>
-            <label htmlFor="email" className="block text-sm text-gray-300 mb-1">
+          <div className="space-y-1">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <input
@@ -72,13 +89,13 @@ const ContactSection = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
 
-          <div>
-            <label htmlFor="message" className="block text-sm text-gray-300 mb-1">
+          <div className="space-y-1">
+            <label htmlFor="message" className="block text-sm font-medium text-gray-700">
               Message
             </label>
             <textarea
@@ -87,20 +104,22 @@ const ContactSection = () => {
               rows={6}
               value={formData.message}
               onChange={handleChange}
-              className="w-full px-3 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             ></textarea>
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded transition"
-            disabled={loading}
-          >
-            {loading ? 'Sending...' : 'Send Message'}
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-md transition shadow-sm"
+              disabled={loading}
+            >
+              {loading ? 'Sending...' : 'Send Message'}
+            </button>
+          </div>
 
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          {error && <p className="text-red-500 text-sm mt-2 text-center">{error}</p>}
         </form>
       )}
     </section>
