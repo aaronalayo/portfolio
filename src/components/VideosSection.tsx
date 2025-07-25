@@ -58,23 +58,28 @@ const VideosSection = () => {
   };
 
   return (
-    <section className="min-h-screen bg-white px-4 py-20 flex flex-col items-center z-10">
+    <section className="min-h-screen bg-white px-4 py-20 flex flex-col z-10">
       <h2 className="text-5xl font-extrabold mb-16 text-center uppercase tracking-tight text-blue-900 drop-shadow-sm">
         WORK
       </h2>
 
-      <div style={{gap: '14px', margin: '10px'}} className="grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-8 max-w-7xl w-full px-4">
+      <div style={{ gap: '20px', margin: '150px', marginTop: '10px', marginBottom: '10px' }} className="flex flex-wrap gap-6 justify-start">
         {videos.map((video) => (
           <div
             key={video._id}
-            style={{borderRadius: '16px'}} className="relative group cursor-pointer overflow-hidden rounded-2xl shadow-2xl transition transform hover:scale-105"
+            style={{ borderRadius: '26px' }}
+            className="relative group cursor-pointer overflow-hidden rounded-2xl shadow-2xl transition transform hover:scale-105"
             onClick={() => handleVideoClick(video.vimeoId)}
           >
-            <img
-              src={`https://vumbnail.com/${video.vimeoId}.jpg`}
-              alt={video.title}
-              className="w-full h-full object-cover rounded-2xl"
-            />
+            <div className="aspect-video w-[500px] h-[300px] sm:w-[48%] md:w-[31%] rounded-2xl overflow-hidden cursor-pointer">
+              <img
+                src={`https://vumbnail.com/${video.vimeoId}.jpg`}
+                alt={video.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+
             <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-60 flex items-center justify-center transition">
               <h3 className="text-white text-lg font-bold text-center px-4">
                 {video.title}

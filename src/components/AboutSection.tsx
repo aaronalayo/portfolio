@@ -27,7 +27,7 @@ const AboutSection = () => {
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-900 text-white px-4 py-16">
       <div className="bg-gray-800 border border-gray-700 rounded-xl shadow-lg w-full max-w-[920px] px-10 py-10">
-        <div className="flex items-center gap-10">
+        <div className="flex flex-wrap justify-start gap-6">
           
           {/* Image */}
           <img
@@ -38,7 +38,7 @@ const AboutSection = () => {
 
           {/* Text */}
           <div className="text-base text-gray-200 leading-relaxed flex-1">
-            <h2 className="text-2xl font-semibold text-white p-[20px]">About Me</h2>
+            <h2 className="text-2xl font-semibold text-white text-left">About Me</h2>
             {aboutData.bio.split('\n').map((para, idx) => (
               <p key={idx} className="mb-3">{para.trim()}</p>
             ))}

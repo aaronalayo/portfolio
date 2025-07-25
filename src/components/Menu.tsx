@@ -120,7 +120,7 @@ const Menu = () => {
                   fontSize: '4rem',
                   fontWeight: '800',
                   textTransform: 'uppercase',
-                  // fontFamily: 'Roboto, Arial, sans-serif',
+                  fontFamily: 'Inter, sans-serif',
                   color: '#000000',
                   textDecoration: 'none',
                   cursor: 'pointer',

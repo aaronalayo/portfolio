@@ -37,16 +37,16 @@ const PhotosSection = () => {
         }`
       )
       .then((data: Photo[]) => {
-        setPhotos(data);
         const grouped = data.reduce((acc, photo) => {
           const key = photo.category || 'Uncategorized';
           if (!acc[key]) acc[key] = [];
           acc[key].push(photo);
           return acc;
         }, {} as { [category: string]: Photo[] });
+
+        setPhotos(data);
         setGroupedPhotos(grouped);
-      })
-      .catch((err) => console.error('Error fetching photos:', err));
+      });
   }, []);
 
   const openModal = (category: string, index: number) => {
@@ -70,34 +70,38 @@ const PhotosSection = () => {
   };
 
   return (
-    <section style={{margin: '60px'}} className="min-h-screen bg-white px-4 py-20 flex flex-col items-center z-10">
-      <h2 className="text-5xl font-extrabold mb-16 text-center uppercase tracking-tight text-blue-900 drop-shadow-sm">
+    <section className="min-h-screen bg-white px-4 py-20 flex flex-col z-10 w-full">
+      <h2 className="text-5xl font-extrabold mb-16 text-center uppercase tracking-tight text-blue-900">
         PHOTOS
       </h2>
+
       {Object.entries(groupedPhotos).map(([category, photos]) => (
-        <div key={category} className="mb-8 w-full max-w-7xl">
-          <h3 className="text-2xl font-bold text-blue-800 uppercase mb-4">{category}</h3>
-          <div style={{gap: '8px'}} className="grid grid-cols-5 sm:grid-cols-3 md:grid-cols-2 xl:grid-cols-5 gap-8 max-w-7xl w-full px-4">
-            {photos.map((photo, index) => (
-              <div
-                key={photo._id}
-                onClick={() => openModal(category, index)}
-                className="cursor-pointer bg-white rounded-lg shadow overflow-hidden hover:scale-105 transition-transform"
-              >
-                <img
-                  src={urlFor(photo.image).width(400).height(200).url()}
-                  alt={photo.title}
-                  className="w-full h-[180px] object-contain bg-gray-100"
-                  loading="lazy"
-                />
-              </div>
-            ))}
+        <div style={{ margin: '150px', marginTop: '10px', marginBottom: '10px' }} key={category} >
+          <h3 className="text-2xl font-bold text-blue-800 uppercase mx-4 px-4">{category}</h3>
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex flex-wrap justify-start gap-6">
+              {photos.map((photo, index) => (
+                <div
+                  key={photo._id}
+                  onClick={() => openModal(category, index)}
+                  className="sm:w-[48%] md:w-[30%] cursor-pointer bg-white rounded shadow overflow-hidden hover:scale-105 transition-transform"
+                >
+                  <img
+                    src={urlFor(photo.image).width(600).height(400).url()}
+                    alt={photo.title}
+                    style={{ gap: '12px', margin: '10px' }} className="w-full h-[220px] object-cover"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
+
         </div>
       ))}
 
+
       {/* Modal */}
-      {selectedCategory && (
+   {selectedCategory && (
         <div
           className="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-md flex items-center justify-center z-50"
           onClick={closeModal}
@@ -130,6 +134,7 @@ const PhotosSection = () => {
               style={{
                 position: 'absolute',
                 top: '50%',
+                left: '0',
                 transform: 'translateY(-50%)',
                 fontSize: '4rem', // Thinner button
                 fontFamily: 'Roboto, Arial, sans-serif', 
@@ -163,6 +168,7 @@ const PhotosSection = () => {
               style={{
                 position: 'absolute',
                 top: '50%',
+                right: '0',
                 transform: 'translateY(-50%)',
                 fontSize: '4rem', // Thinner button
                 fontFamily: 'Roboto, Arial, sans-serif', // Use Helvetica font
@@ -181,6 +187,10 @@ const PhotosSection = () => {
           </div>
         </div>
       )}
+
+
+
+
     </section>
   );
 };
