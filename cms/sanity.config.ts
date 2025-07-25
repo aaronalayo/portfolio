@@ -4,9 +4,9 @@ import { visionTool } from '@sanity/vision'
 import schemaTypes from './schemaTypes'
 
 export default defineConfig({
-  name: 'default',
+  name: 'malangastudio',
   title: 'portfolio',
-  projectId: 'or9vpa2z', // your actual projectId
+  projectId: 'or9vpa2z',
   dataset: 'production',
   plugins: [structureTool(), visionTool()],
   schema: {
