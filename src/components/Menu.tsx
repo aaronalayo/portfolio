@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const StarIcon = ({ className = '', size = 68, style = {} }) => (
+const StarIcon = ({ className = '', size = 200, style = {} }) => (
   <svg
     className={className}
     style={style}
@@ -55,7 +55,7 @@ const Menu = () => {
   className="w-12 h-12 flex items-center justify-center bg-transparent rounded-full focus:outline-none focus:ring-0 focus:shadow-none outline-none shadow-none border-none"
 >
   <StarIcon
-    size={68}
+    size={108}
     className={`transform transition-transform duration-500 ease-in-out ${open ? 'rotate-180' : 'rotate-0'}`}
   />
 </button>

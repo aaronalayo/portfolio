@@ -14,8 +14,8 @@ function App() {
         <Menu />
 
         {/* Main content fills space and centers content */}
-        <main className="flex-grow flex items-center justify-center px-4">
-          <div className="w-full max-w-3xl px-6 py-12 bg-white rounded-2xl shadow-xl mt-10 mb-10">
+        <main className="flex-grow flex items-center justify-center">
+          <div className="w-full bg-white rounded-2xl shadow-xl">
             <Routes>
               <Route path="/videos" element={<VideosSection />} />
               <Route path="/photos" element={<PhotosSection />} />

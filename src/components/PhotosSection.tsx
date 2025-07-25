@@ -76,8 +76,8 @@ const PhotosSection = () => {
       </h2>
 
       {Object.entries(groupedPhotos).map(([category, photos]) => (
-        <div style={{ margin: '150px', marginTop: '10px', marginBottom: '10px' }} key={category} >
-          <h3 className="text-2xl font-bold text-blue-800 uppercase mx-4 px-4">{category}</h3>
+        <div key={category} >
+          <h3 className="text-2xl font-bold text-blue-800 uppercase mx-4">{category}</h3>
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex flex-wrap justify-start gap-6">
               {photos.map((photo, index) => (
@@ -109,7 +109,7 @@ const PhotosSection = () => {
           {/* Placeholder Container */}
           <div
             style={{
-              backgroundColor: 'rgba(227, 225, 225, 0.82)', // Gray background
+              backgroundColor: 'rgba(255, 255, 255, 1)', // Gray background
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -156,7 +156,7 @@ const PhotosSection = () => {
             <img
               src={groupedPhotos[selectedCategory][selectedIndex].image.asset.url}
               alt={groupedPhotos[selectedCategory][selectedIndex].title}
-              className="max-w-full max-h-full object-contain rounded-lg"
+              className="max-w-full max-h-full object-contain"
             />
 
             {/* Next Button */}
