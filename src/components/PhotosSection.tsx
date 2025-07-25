@@ -17,7 +17,7 @@ interface Photo {
 }
 
 const PhotosSection = () => {
-  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [, setPhotos] = useState<Photo[]>([]);
   const [groupedPhotos, setGroupedPhotos] = useState<{ [category: string]: Photo[] }>({});
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);

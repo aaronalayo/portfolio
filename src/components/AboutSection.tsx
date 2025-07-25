@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import sanityClient from '../sanityClient';
 import imageUrlBuilder from '@sanity/image-url';
 
