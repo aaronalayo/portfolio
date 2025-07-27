@@ -71,14 +71,15 @@ const PhotosSection = () => {
 
   return (
     <section className="min-h-screen bg-white px-4 py-20 flex flex-col z-10 w-full">
-      <h2 className="text-5xl font-extrabold mb-16 text-center uppercase tracking-tight text-blue-900">
+      <h2 className="text-5xl font-extrabold mb-16 text-center uppercase tracking-tight text-black-900">
         PHOTOS
       </h2>
 
       {Object.entries(groupedPhotos).map(([category, photos]) => (
         <div key={category} >
-          <h3 className="text-2xl font-bold text-blue-800 uppercase mx-4">{category}</h3>
           <div className="max-w-7xl mx-auto px-4">
+                      <h3 className="text-2xl font-bold text-black-800 uppercase">{category}</h3>
+
             <div className="flex flex-wrap justify-start gap-6">
               {photos.map((photo, index) => (
                 <div
