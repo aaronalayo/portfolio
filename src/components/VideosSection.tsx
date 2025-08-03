@@ -7,7 +7,7 @@ interface Video {
   vimeoId: string;
 }
 
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 6;
 
 const VideosSection = () => {
   const [videos, setVideos] = useState<Video[]>([]);
@@ -20,7 +20,7 @@ const VideosSection = () => {
     (node: HTMLDivElement | null) => {
       if (loading) return;
       if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver(entries => {
+      observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
           loadMoreVideos();
         }
@@ -40,11 +40,10 @@ const VideosSection = () => {
       );
 
       if (data.length > 0) {
-        // Prevent duplicates by using Set or filter
-        setVideos(prev =>
+        setVideos((prev) =>
           [...prev, ...data].filter((v, i, self) => self.findIndex(x => x._id === v._id) === i)
         );
-        setStart(prev => prev + PAGE_SIZE);
+        setStart((prev) => prev + PAGE_SIZE);
       } else {
         setHasMore(false);
       }
@@ -55,9 +54,20 @@ const VideosSection = () => {
     }
   };
 
+  // Initial load
   useEffect(() => {
     loadMoreVideos();
   }, []);
+
+  // Auto-load if page is too short to scroll
+  useEffect(() => {
+    if (!loading && hasMore) {
+      const isScrollable = document.body.scrollHeight > window.innerHeight;
+      if (!isScrollable) {
+        loadMoreVideos();
+      }
+    }
+  }, [videos]);
 
   const handleVideoClick = (vimeoId: string) => {
     const container = document.createElement('div');
@@ -132,7 +142,7 @@ const VideosSection = () => {
       </div>
 
       {loading && <p className="text-center mt-6 text-gray-600">Loading more videos...</p>}
-      {!hasMore && <p className="text-center mt-6 text-gray-400">No more videos to show.</p>}
+      {!hasMore && <p className="text-center italic mt-6 text-gray-400">That's all folks!</p>}
     </section>
   );
 };
