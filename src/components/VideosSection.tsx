@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import sanityClient from '../sanityClient';
 
 interface Video {
@@ -7,13 +7,56 @@ interface Video {
   vimeoId: string;
 }
 
+const PAGE_SIZE = 3;
+
 const VideosSection = () => {
   const [videos, setVideos] = useState<Video[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [start, setStart] = useState(0);
+  const observer = useRef<IntersectionObserver | null>(null);
+
+  const lastVideoRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && hasMore) {
+          loadMoreVideos();
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore]
+  );
+
+  const loadMoreVideos = async () => {
+    setLoading(true);
+    try {
+      const data: Video[] = await sanityClient.fetch(
+        `*[_type == "video"] | order(_createdAt desc) [${start}...${start + PAGE_SIZE}] {
+          _id, title, vimeoId
+        }`
+      );
+
+      if (data.length > 0) {
+        // Prevent duplicates by using Set or filter
+        setVideos(prev =>
+          [...prev, ...data].filter((v, i, self) => self.findIndex(x => x._id === v._id) === i)
+        );
+        setStart(prev => prev + PAGE_SIZE);
+      } else {
+        setHasMore(false);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    sanityClient
-      .fetch(`*[_type == "video"]{ _id, title, vimeoId }`)
-      .then((data: Video[]) => setVideos(data));
+    loadMoreVideos();
   }, []);
 
   const handleVideoClick = (vimeoId: string) => {
@@ -63,28 +106,33 @@ const VideosSection = () => {
         WORK
       </h2>
 
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-[1600px] mx-auto px-6">
-  {videos.map((video) => (
-    <div
-      key={video._id}
-className="aspect-video w-full min-h-[320px] cursor-pointer overflow-hidden rounded-2xl shadow-xl relative group transition-transform hover:scale-105"
-      onClick={() => handleVideoClick(video.vimeoId)}
-    >
-      <img
-        src={`https://vumbnail.com/${video.vimeoId}.jpg`}
-        alt={video.title}
-        className="w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 flex items-center justify-center transition">
-        <h3 className="text-white text-lg font-semibold px-4 text-center">
-          {video.title}
-        </h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-[1600px] mx-auto px-6">
+        {videos.map((video, index) => {
+          const isLast = index === videos.length - 1;
+          return (
+            <div
+              key={video._id}
+              ref={isLast ? lastVideoRef : null}
+              className="aspect-video w-full min-h-[320px] cursor-pointer overflow-hidden rounded-2xl shadow-xl relative group transition-transform hover:scale-105"
+              onClick={() => handleVideoClick(video.vimeoId)}
+            >
+              <img
+                src={`https://vumbnail.com/${video.vimeoId}.jpg`}
+                alt={video.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 flex items-center justify-center transition">
+                <h3 className="text-white text-lg font-semibold px-4 text-center">
+                  {video.title}
+                </h3>
+              </div>
+            </div>
+          );
+        })}
       </div>
-    </div>
-  ))}
-</div>
 
-
+      {loading && <p className="text-center mt-6 text-gray-600">Loading more videos...</p>}
+      {!hasMore && <p className="text-center mt-6 text-gray-400">No more videos to show.</p>}
     </section>
   );
 };
