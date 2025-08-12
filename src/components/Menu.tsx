@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const StarIcon = ({ className = '', size = 200, style = {} }) => (
+const StarIcon = ({ className = '', size = 400, style = {} }) => (
   <svg
     className={className}
     style={style}
@@ -77,18 +77,26 @@ const Menu = () => {
         </button>
 
         {/* Navigation links */}
-        <nav className="flex flex-col items-center gap-8 text-center">
-          {sections.map((section) => (
-            <Link
-              key={section.value}
-              to={`/${section.value}`}
-              onClick={() => setOpen(false)}
-              className="text-4xl sm:text-6xl font-bold uppercase text-blue-900 transition"
-            >
-              {section.label}
-            </Link>
-          ))}
-        </nav>
+        <nav className="flex flex-col items-center gap-6 text-center">
+  {sections.map((section) => (
+    <Link
+      key={section.value}
+      to={`/${section.value}`}
+      onClick={() => setOpen(false)}
+      className="
+        font-bold uppercase text-blue-900 transition
+        text-2xl sm:text-4xl md:text-5xl
+        max-w-[90vw]
+      "
+      style={{
+        fontSize: 'clamp(1.2rem, 6vw, 3rem)', // scales with viewport
+      }}
+    >
+      {section.label}
+    </Link>
+  ))}
+</nav>
+
       </div>
     </>
   );
