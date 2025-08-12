@@ -1,10 +1,29 @@
 import { useEffect, useState } from 'react';
 import sanityClient from '../sanityClient';
+import type { PortableTextBlock } from '@portabletext/types';
+import { PortableText } from '@portabletext/react';
 
+const components = {
+  marks: {
+    link: ({ value, children }: any) => {
+      const { href, blank } = value;
+      return (
+        <a
+          href={href}
+          target={blank ? '_blank' : '_self'}
+          rel={blank ? 'noopener noreferrer' : undefined}
+          className="text-blue-600 hover:underline"
+        >
+          {children}
+        </a>
+      );
+    },
+  },
+};
 interface Developer {
   _id: string;
   title: string;
-  description: string;
+  description: PortableTextBlock[]; // rich text blocks
   githubUrl?: string;
 }
 
@@ -37,9 +56,10 @@ const DeveloperWorkSection = () => {
               className="bg-white text-gray-800 rounded-2xl shadow-lg p-6 transition-transform hover:-translate-y-1 hover:shadow-xl"
             >
               <h3 className="text-lg font-semibold mb-2">{project.title}</h3>
-              <p className="text-sm text-gray-600 mb-4 whitespace-pre-wrap break-words">
-                {project.description}
-              </p>
+              <div className="text-sm text-gray-600 mb-4 break-words">
+  <PortableText value={project.description} components={components} />
+</div>
+
               {project.githubUrl && (
                 <a
                   href={project.githubUrl}
