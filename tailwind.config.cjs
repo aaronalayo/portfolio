@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Avenir', 'system-ui', 'sans-serif'],
+  veep: ['"Bodoni Moda"', 'didot', 'serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out forwards',

@@ -1,10 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap');
+
+
 @import "tailwindcss";
 @import "tw-animate-css";
+/* @tailwind base;
 
-@custom-variant dark (&:is(.dark *));
+@tailwind components;
+@tailwind utilities; */
+/* @custom-variant dark (&:is(.dark *)); */
 @layer utilities {
   .animate-fadeIn {
     animation: fadeIn 0.3s ease-in-out;
@@ -23,7 +27,7 @@
 }
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Bodoni Moda, didot, serif";
   line-height: 1.5;
   font-weight: 400;
   font-synthesis: none;
@@ -103,6 +107,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
+
 
 .dark {
   --background: oklch(0.145 0 0);

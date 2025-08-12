@@ -71,81 +71,93 @@ const PhotosSection = () => {
 
   return (
     <section className="min-h-screen bg-white px-4 py-20 flex flex-col z-10 w-full">
-      <h2 className="text-2xl font-bold mb-16 text-center uppercase tracking-tight text-blue-900">
-        PHOTOGRAPGY
+      <h2 className="font-veep font-bold text-2xl mb-16 text-center uppercase tracking-tight text-black-900">
+        PHOTOGRAPHY
       </h2>
 
       {Object.entries(groupedPhotos).map(([category, photos]) => (
-        <div key={category} >
+        <div key={category}>
           <div className="max-w-7xl mx-auto px-4">
-                      <h3 className="text-2xl font-bold text-black-800 uppercase">{category}</h3>
+            <h3 className="text-2xl font-bold uppercase font-veep mb-6 mt-6">{category}</h3>
 
-            <div className="flex flex-wrap justify-start gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 font-sans">
               {photos.map((photo, index) => (
                 <div
                   key={photo._id}
                   onClick={() => openModal(category, index)}
-                  className="sm:w-[58%] md:w-[40%] cursor-pointer bg-white rounded shadow overflow-hidden hover:scale-105 transition-transform"
+                  className="cursor-pointer bg-white rounded shadow overflow-hidden transition-transform duration-300"
                 >
-                  <img
-                    src={urlFor(photo.image).width(600).height(400).url()}
-                    alt={photo.title}
-                    style={{ gap: '12px', margin: '5px' }} className="w-full h-[320px] object-cover"
-                  />
+                  <div className="overflow-hidden">
+                    <img
+                      src={urlFor(photo.image).width(600).height(400).url()}
+                      alt={photo.title}
+                      className="w-full h-[420px] object-cover transform transition-transform duration-300 hover:scale-110"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
           </div>
-
         </div>
       ))}
 
-
-      {/* Modal */}
-   {selectedCategory && (
+      {selectedCategory && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-md flex items-center justify-center z-50"
+          className="fixed inset-0 bg-white bg-opacity-90 backdrop-blur-md flex items-center justify-center z-50"
           onClick={closeModal}
         >
-          {/* Placeholder Container */}
           <div
             style={{
-              backgroundColor: 'rgba(255, 255, 255, 1)', // Gray background
+              backgroundColor: 'rgba(255, 255, 255, 1)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              position: 'fixed', // Use fixed positioning to ensure it's relative to the viewport
-              top: '50%', // Center vertically
-              left: '50%', // Center horizontally
-              transform: 'translate(-50%, -50%)', // Adjust for the container's dimensions
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
               borderRadius: '10px',
               maxWidth: '100vw',
               maxHeight: '90vh',
               width: '90vw',
               height: '80vh',
             }}
-  
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
           >
-            {/* Prev Button */}
+            {/* Close button */}
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handlePrev();
+              onClick={closeModal}
+              style={{
+                position: 'absolute',
+                top: '-65px',
+                right: '10px',
+                fontSize: '2rem',
+                fontWeight: 300,
+                color: 'black',
+                cursor: 'pointer',
+                background: 'transparent',
+                border: 'none',
               }}
+              aria-label="Close"
+            >
+              ×
+            </button>
+
+            {/* Previous button */}
+            <button
+              onClick={handlePrev}
               style={{
                 position: 'absolute',
                 top: '50%',
                 left: '0',
                 transform: 'translateY(-50%)',
-                fontSize: '4rem', // Thinner button
-                fontFamily: 'Roboto, Arial, sans-serif', 
-                fontWeight: 100, // Use Helvetica font
-                color: 'white',
+                fontSize: '2rem',
+                fontWeight: 200,
+                color: 'black',
                 zIndex: 50,
                 cursor: 'pointer',
-                backgroundColor: 'rgba(71, 68, 68, 0.7)', // Gray background
-                borderRadius: 'none', // Circular shape
-                padding: '0.5rem', // Space inside the button
+                backgroundColor: 'transparent',
+                padding: '0.2rem',
                 border: 'none',
               }}
               aria-label="Previous"
@@ -160,25 +172,21 @@ const PhotosSection = () => {
               className="max-w-full max-h-full object-contain"
             />
 
-            {/* Next Button */}
+            {/* Next button */}
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleNext();
-              }}
+              onClick={handleNext}
               style={{
                 position: 'absolute',
                 top: '50%',
                 right: '0',
                 transform: 'translateY(-50%)',
-                fontSize: '4rem', // Thinner button
-                fontFamily: 'Roboto, Arial, sans-serif', // Use Helvetica font
-                color: 'white',
+                fontSize: '2rem',
+                fontWeight: 200,
+                color: 'black',
                 zIndex: 50,
                 cursor: 'pointer',
-                backgroundColor: 'rgba(71, 68, 68, 0.7)', // Gray background
-                borderRadius: 'none', // Circular shape
-                padding: '0.5rem', // Space inside the button
+                backgroundColor: 'transparent',
+                padding: '0.2rem',
                 border: 'none',
               }}
               aria-label="Next"
@@ -188,10 +196,6 @@ const PhotosSection = () => {
           </div>
         </div>
       )}
-
-
-
-
     </section>
   );
 };

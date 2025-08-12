@@ -34,9 +34,9 @@ const CloseIcon = ({ className = '', size = 48 }) => (
 );
 
 const sections = [
-  { label: 'EDITOR', value: 'videos' },
+  { label: 'EDITORIAL', value: 'videos' },
+  { label: 'DEV WORK', value: 'developer' },
   { label: 'PHOTOGRAPHY', value: 'photos' },
-  { label: 'WEB', value: 'developer' },
   { label: 'ABOUT', value: 'about' },
   { label: 'CONTACT', value: 'contact' },
 ];
@@ -63,7 +63,7 @@ const Menu = () => {
 
       {/* Fullscreen menu overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-white/60 backdrop-blur-md transition-opacity duration-300 ${
+        className={`fixed inset-0 z-40 bg-white/80 backdrop-blur-md transition-opacity duration-300 ${
           open ? 'flex' : 'hidden'
         } flex-col items-center justify-center`}
       >
@@ -89,7 +89,7 @@ const Menu = () => {
         max-w-[90vw]
       "
       style={{
-        fontSize: 'clamp(1.2rem, 6vw, 3rem)', // scales with viewport
+        fontSize: 'clamp(2.2rem, 6vw, 3rem)', // scales with viewport
       }}
     >
       {section.label}

@@ -16,6 +16,7 @@ function App() {
 
         {/* Main content fills space and centers content */}
         <main className="flex-grow flex items-center justify-center">
+
           <div className="w-full bg-white rounded-2xl shadow-xl">
             <Routes>
               <Route path="/" element={<RandomWorkSection />} />
@@ -25,6 +26,7 @@ function App() {
               <Route path="/about" element={<AboutSection />} />
               <Route path="/contact" element={<ContactSection />} />
             </Routes>
+
           </div>
         </main>
 

@@ -112,10 +112,9 @@ const VideosSection = () => {
 
   return (
     <section className="w-full min-h-screen bg-white flex flex-col z-10 px-4 py-20">
-      <h2 className="text-2xl font-bold mb-16 text-center uppercase tracking-tight text-blue-900 drop-shadow-sm">
+      <h2 className="font-veep font-bold text-2xl mb-16 text-center uppercase tracking-tight text-black-900 drop-shadow-sm">
         EDITORIAL WORK
       </h2>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-[1600px] mx-auto px-6">
         {videos.map((video, index) => {
           const isLast = index === videos.length - 1;
@@ -132,7 +131,7 @@ const VideosSection = () => {
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 flex items-center justify-center transition">
-                <h3 className="text-white text-lg font-semibold px-4 text-center">
+                <h3 className="text-white text-2xl font-semibold px-4 text-center">
                   {video.title}
                 </h3>
               </div>
