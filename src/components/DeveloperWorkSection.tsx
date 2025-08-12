@@ -43,7 +43,7 @@ const DeveloperWorkSection = () => {
   }, []);
 
   return (
-    <section className="w-full bg-gray-900 py-20 px-4">
+    <section className="w-full py-20 px-4">
       <div className="max-w-7xl mx-auto">
         <h2 className="font veep text-2xl font-bold text-white text-center mb-12 uppercase tracking-wide">
           Developer Work
@@ -53,12 +53,12 @@ const DeveloperWorkSection = () => {
           {projects.map((project) => (
             <div
               key={project._id}
-              className="bg-white text-gray-800 rounded-2xl shadow-lg p-6 transition-transform hover:-translate-y-1 hover:shadow-xl"
+              className="bg-yellow-100 text-blak rounded-2xl shadow-xl/30 p-6 transition-transform hover:-translate-y-1 hover:shadow-2xl"
             >
               <h3 className="text-lg font-semibold mb-2">{project.title}</h3>
-              <div className="text-sm text-gray-600 mb-4 break-words">
-  <PortableText value={project.description} components={components} />
-</div>
+              <div className="text-sm text-black mb-4 break-words">
+                <PortableText value={project.description} components={components} />
+              </div>
 
               {project.githubUrl && (
                 <a

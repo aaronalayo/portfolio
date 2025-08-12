@@ -15,7 +15,7 @@ function App() {
         <Menu />
 
         {/* Main content fills space and centers content */}
-        <main className="flex-grow flex items-center justify-center">
+        <main className="flex-grow flex">
 
           <div className="w-full bg-white rounded-2xl shadow-xl">
             <Routes>

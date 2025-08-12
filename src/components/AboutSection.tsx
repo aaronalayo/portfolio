@@ -25,14 +25,14 @@ const AboutSection = () => {
   }
 
   return (
-    <section className="min-h-screen w-full bg-white px-6 py-20 flex items-center justify-center">
-      <div className="flex flex-col md:flex-row items-center gap-10 max-w-5xl w-full bg-gray-50 rounded-2xl shadow-lg p-8">
+    <section className="w-full min-h-screen bg-white px-6 py-20 flex justify-center items-center">
+      <div className="flex flex-col md:flex-row items-center gap-10 max-w-5xl w-full bg-gray-70 px-6 py-20 ">
         {/* Image */}
         <div className="w-full md:w-1/2 flex justify-center">
           <img
             src={urlFor(aboutData.image).width(400).height(400).url()}
             alt="About me"
-            className="rounded-xl object-cover w-[300px] h-[300px] sm:w-[360px] sm:h-[360px]"
+            className="object-cover w-[300px] h-[300px] sm:w-[360px] sm:h-[360px]"
           />
         </div>
 
