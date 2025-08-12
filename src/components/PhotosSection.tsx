@@ -101,101 +101,70 @@ const PhotosSection = () => {
         </div>
       ))}
 
-      {selectedCategory && (
-        <div
-          className="fixed inset-0 bg-white bg-opacity-90 backdrop-blur-md flex items-center justify-center z-50"
-          onClick={closeModal}
-        >
-          <div
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 1)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              borderRadius: '10px',
-              maxWidth: '100vw',
-              maxHeight: '90vh',
-              width: '90vw',
-              height: '80vh',
-            }}
-            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
-          >
-            {/* Close button */}
-            <button
-              onClick={closeModal}
-              style={{
-                position: 'absolute',
-                top: '-65px',
-                right: '10px',
-                fontSize: '2rem',
-                fontWeight: 300,
-                color: 'black',
-                cursor: 'pointer',
-                background: 'transparent',
-                border: 'none',
-              }}
-              aria-label="Close"
-            >
-              ×
-            </button>
+   {selectedCategory && (
+  <div
+   className="fixed inset-0 bg-white bg-opacity-90 backdrop-blur-md flex items-center justify-center z-50 p-4"
+    onClick={closeModal}
+    style={{ overflow: 'auto' }} // allows scrolling if content too big
+  >
+    {/* Close button fixed to viewport */}
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        closeModal();
+      }}
+      className="fixed top-4 right-3 text-3xl text-black bg-white bg-opacity-70 rounded-full w-10 h-10 flex items-center justify-center hover:bg-opacity-90 transition"
+      aria-label="Close"
+    >
+      ×
+    </button>
 
-            {/* Previous button */}
-            <button
-              onClick={handlePrev}
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '0',
-                transform: 'translateY(-50%)',
-                fontSize: '2rem',
-                fontWeight: 200,
-                color: 'black',
-                zIndex: 50,
-                cursor: 'pointer',
-                backgroundColor: 'transparent',
-                padding: '0.2rem',
-                border: 'none',
-              }}
-              aria-label="Previous"
-            >
-              ‹
-            </button>
+    {/* Image container */}
+        {/* Previous button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          handlePrev();
+        }}
+        className="absolute left-4 top-1/2 -translate-y-1/2 text-3xl text-black bg-white bg-opacity-70 h-10 flex items-center justify-center hover:bg-opacity-90 transition"
+        aria-label="Previous"
+      >
+        ‹
+      </button>
+    <div
+       className="relative flex items-center justify-center bg-white rounded-lg max-w-full w-[80vw]"
+      style={{
+        maxHeight: '70vh',  // reduced height
+        height: '70vh',
+        overflowY: 'hidden', // allows scrolling if content too big
+      }}
+    >
+  
 
-            {/* Image */}
-            <img
-              src={groupedPhotos[selectedCategory][selectedIndex].image.asset.url}
-              alt={groupedPhotos[selectedCategory][selectedIndex].title}
-              className="max-w-full max-h-full object-contain"
-            />
+      {/* Image */}
+      <img
+        src={groupedPhotos[selectedCategory][selectedIndex].image.asset.url}
+        alt={groupedPhotos[selectedCategory][selectedIndex].title}
+        className="max-w-full max-h-full object-contain"
+      />
 
-            {/* Next button */}
-            <button
-              onClick={handleNext}
-              style={{
-                position: 'absolute',
-                top: '50%',
-                right: '0',
-                transform: 'translateY(-50%)',
-                fontSize: '2rem',
-                fontWeight: 200,
-                color: 'black',
-                zIndex: 50,
-                cursor: 'pointer',
-                backgroundColor: 'transparent',
-                padding: '0.2rem',
-                border: 'none',
-              }}
-              aria-label="Next"
-            >
-              ›
-            </button>
-          </div>
-        </div>
-      )}
+    </div>
+    
+      {/* Next button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          handleNext();
+        }}
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-3xl text-black bg-white bg-opacity-70 h-10 flex items-center justify-center hover:bg-opacity-90 transition"
+        aria-label="Next"
+      >
+        ›
+      </button>
+  </div>
+)}
+
+
     </section>
   );
 };
