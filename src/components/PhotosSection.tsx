@@ -71,8 +71,8 @@ const PhotosSection = () => {
 
   return (
     <section className="min-h-screen bg-white px-4 py-20 flex flex-col z-10 w-full">
-      <h2 className="text-5xl font-extrabold mb-16 text-center uppercase tracking-tight text-black-900">
-        PHOTOS
+      <h2 className="text-2xl font-bold mb-16 text-center uppercase tracking-tight text-blue-900">
+        PHOTOGRAPGY
       </h2>
 
       {Object.entries(groupedPhotos).map(([category, photos]) => (
@@ -85,12 +85,12 @@ const PhotosSection = () => {
                 <div
                   key={photo._id}
                   onClick={() => openModal(category, index)}
-                  className="sm:w-[48%] md:w-[30%] cursor-pointer bg-white rounded shadow overflow-hidden hover:scale-105 transition-transform"
+                  className="sm:w-[58%] md:w-[40%] cursor-pointer bg-white rounded shadow overflow-hidden hover:scale-105 transition-transform"
                 >
                   <img
                     src={urlFor(photo.image).width(600).height(400).url()}
                     alt={photo.title}
-                    style={{ gap: '12px', margin: '10px' }} className="w-full h-[220px] object-cover"
+                    style={{ gap: '12px', margin: '5px' }} className="w-full h-[320px] object-cover"
                   />
                 </div>
               ))}
@@ -119,9 +119,9 @@ const PhotosSection = () => {
               left: '50%', // Center horizontally
               transform: 'translate(-50%, -50%)', // Adjust for the container's dimensions
               borderRadius: '10px',
-              maxWidth: '90vw',
+              maxWidth: '100vw',
               maxHeight: '90vh',
-              width: '80vw',
+              width: '90vw',
               height: '80vh',
             }}
   

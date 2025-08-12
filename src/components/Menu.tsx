@@ -34,8 +34,8 @@ const CloseIcon = ({ className = '', size = 48 }) => (
 );
 
 const sections = [
-  { label: 'VIDEOS', value: 'videos' },
-  { label: 'PHOTOS', value: 'photos' },
+  { label: 'EDITOR', value: 'videos' },
+  { label: 'PHOTOGRAPHY', value: 'photos' },
   { label: 'WEB', value: 'developer' },
   { label: 'ABOUT', value: 'about' },
   { label: 'CONTACT', value: 'contact' },
@@ -83,7 +83,7 @@ const Menu = () => {
               key={section.value}
               to={`/${section.value}`}
               onClick={() => setOpen(false)}
-              className="text-4xl sm:text-6xl font-extrabold uppercase text-black hover:underline transition"
+              className="text-4xl sm:text-6xl font-bold uppercase text-blue-900 transition"
             >
               {section.label}
             </Link>

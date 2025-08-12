@@ -83,8 +83,8 @@ const VideosSection = () => {
     iframe.src = `https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=0`;
     iframe.allow = 'autoplay; fullscreen';
     iframe.allowFullscreen = true;
-    iframe.style.width = '80%';
-    iframe.style.height = '80%';
+    iframe.style.width = '90%';
+    iframe.style.height = '90%';
     iframe.style.border = 'none';
     iframe.style.borderRadius = '16px';
     iframe.style.boxShadow = '0 10px 40px rgba(255, 255, 255, 1)';
@@ -112,8 +112,8 @@ const VideosSection = () => {
 
   return (
     <section className="w-full min-h-screen bg-white flex flex-col z-10 px-4 py-20">
-      <h2 className="text-5xl font-extrabold mb-16 text-center uppercase tracking-tight text-black-900 drop-shadow-sm">
-        WORK
+      <h2 className="text-2xl font-bold mb-16 text-center uppercase tracking-tight text-blue-900 drop-shadow-sm">
+        EDITORIAL WORK
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-[1600px] mx-auto px-6">

@@ -44,7 +44,7 @@ const ContactSection = () => {
 
   return (
     <section className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-blue-50">
-      <h2 className="text-5xl font-extrabold mb-6 text-center text-blue-900 uppercase tracking-tight drop-shadow-sm">
+      <h2 className="text-2xl font-bold mb-6 text-center text-blue-900 uppercase tracking-tight drop-shadow-sm">
         Contact
       </h2>
 
@@ -68,12 +68,10 @@ const ContactSection = () => {
           onSubmit={handleSubmit}
         >
           <div className="space-y-1">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Name
-            </label>
             <Input
               id="name"
               name="name"
+              placeholder='Name'
               value={formData.name}
               onChange={handleChange}
               required
@@ -81,13 +79,11 @@ const ContactSection = () => {
           </div>
 
           <div className="space-y-1">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
             <Input
               id="email"
               name="email"
               type="email"
+              placeholder='Email'
               value={formData.email}
               onChange={handleChange}
               required
@@ -95,12 +91,10 @@ const ContactSection = () => {
           </div>
 
           <div className="space-y-1">
-            <label htmlFor="message" className="block text-sm font-medium text-gray-700">
-              Message
-            </label>
             <Textarea
               id="message"
               name="message"
+              placeholder='Message'
               rows={6}
               value={formData.message}
               onChange={handleChange}

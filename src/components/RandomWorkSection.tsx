@@ -31,7 +31,7 @@ const RandomWorkSection = () => {
             title={randomVideo.title}
             allow="autoplay; fullscreen"
             allowFullScreen
-            className="absolute top-1/2 left-1/2 w-auto h-auto min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 pointer-events-none portrait:scale-[2.4] portrait:min-w-[140vw] portrait:min-h-[140vh]"
+            className="absolute top-1/2 left-1/2 w-auto h-auto min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 pointer-events-none"
             style={{ border: 'none' }}
           />
         </div>

@@ -26,7 +26,7 @@ const DeveloperWorkSection = () => {
   return (
     <section className="w-full bg-gray-900 py-20 px-4">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-4xl font-bold text-white text-center mb-12 uppercase tracking-wide">
+        <h2 className="text-2xl font-bold text-white text-center mb-12 uppercase tracking-wide">
           Developer Work
         </h2>
 
