@@ -7,6 +7,7 @@ import ContactSection from './components/ContactSection';
 import Menu from './components/Menu';
 import Footer from './components/Footer';
 import RandomWorkSection from './components/RandomWorkSection';
+import HomeButton from './components/HomeButton';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <main className="flex-grow flex">
 
           <div className="w-full bg-white rounded-2xl shadow-xl">
+            <HomeButton />
             <Routes>
               <Route path="/" element={<RandomWorkSection />} />
               <Route path="/videos" element={<VideosSection />} />

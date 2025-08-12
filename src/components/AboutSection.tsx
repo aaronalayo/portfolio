@@ -25,7 +25,7 @@ const AboutSection = () => {
   }
 
   return (
-    <section className="w-full min-h-screen bg-white px-6 py-20 flex justify-center items-center">
+    <section className="w-full bg-white px-6 py-20 flex justify-center items-center">
       <div className="flex flex-col md:flex-row items-center gap-10 max-w-5xl w-full bg-gray-70 px-6 py-20 ">
         {/* Image */}
         <div className="w-full md:w-1/2 flex justify-center">

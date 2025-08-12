@@ -41,9 +41,8 @@ const ContactSection = () => {
       setLoading(false);
     }
   };
-
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-blue-50">
+    <section className="w-full flex flex-col  px-6 py-50 items-center justify-center items-center">
       <h2 className="text-2xl font-bold mb-6 text-center text-blue-900 uppercase tracking-tight drop-shadow-sm">
         Contact
       </h2>

@@ -52,7 +52,7 @@ const Menu = () => {
           onClick={() => setOpen(!open)}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
-          className="w-12 h-12 flex items-center justify-center bg-transparent rounded-full focus:outline-none"
+          className="w-12 h-12 flex items-center justify-center bg-transparent rounded-full focus:outline-none cursor-pointer transition-transform hover:scale-110"
         >
           <StarIcon
             size={64}
@@ -60,7 +60,7 @@ const Menu = () => {
           />
         </button>
       </div>
-
+   
       {/* Fullscreen menu overlay */}
       <div
         className={`fixed inset-0 z-40 bg-white/80 backdrop-blur-md transition-opacity duration-300 ${
