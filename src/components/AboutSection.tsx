@@ -49,7 +49,7 @@ const AboutSection = () => {
             <img
               src={urlFor(aboutData.image).width(400).height(400).url()}
               alt="A portrait photo of me" // More descriptive alt text
-              className="object-cover w-[300px] h-[300px] sm:w-[360px] sm:h-[360px] rounded-full shadow-lg" // Added rounded-full and shadow
+              className="object-cover w-[300px] h-[300px] sm:w-[360px] sm:h-[360px] shadow-lg" // Added rounded-full and shadow
             />
           </div>
 

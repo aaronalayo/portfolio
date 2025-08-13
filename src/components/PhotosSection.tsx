@@ -131,7 +131,7 @@ const PhotosSection = () => {
                       <img
                         src={urlFor(photo.image).width(600).height(400).format('webp').url()}
                         alt={photo.title}
-                        className="w-full h-[420px] object-cover transform transition-transform duration-300 hover:scale-110"
+                        className="w-full h-[220px] object-cover transform transition-transform duration-300 hover:scale-110"
                         draggable={false}
                         onContextMenu={(e) => e.preventDefault()}
                       />
