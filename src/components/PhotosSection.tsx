@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import imageUrlBuilder from '@sanity/image-url';
 import sanityClient from '../sanityClient';
 
@@ -21,7 +21,7 @@ const PhotosSection = () => {
   const [groupedPhotos, setGroupedPhotos] = useState<{ [category: string]: Photo[] }>({});
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
-  const [isImageVisible, setIsImageVisible] = useState(true); // For fade transitions
+  const [animateImage, setAnimateImage] = useState(false);
 
   useEffect(() => {
     sanityClient
@@ -50,51 +50,51 @@ const PhotosSection = () => {
       });
   }, []);
 
-  // Keyboard navigation
-  useEffect(() => {
-    if (!selectedCategory) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') {
-        handleNext();
-      } else if (e.key === 'ArrowLeft') {
-        handlePrev();
-      } else if (e.key === 'Escape') {
-        closeModal();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedCategory, selectedIndex]);
-
   const openModal = (category: string, index: number) => {
     setSelectedCategory(category);
     setSelectedIndex(index);
+    setTimeout(() => setAnimateImage(true), 50); // allow fade-in after modal opens
   };
 
   const closeModal = () => {
-    setSelectedCategory(null);
-    setSelectedIndex(0);
+    setAnimateImage(false);
+    setTimeout(() => {
+      setSelectedCategory(null);
+      setSelectedIndex(0);
+    }, 200);
   };
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (!selectedCategory) return;
-    setIsImageVisible(false);
+    setAnimateImage(false);
     setTimeout(() => {
       setSelectedIndex((prev) => (prev + 1) % groupedPhotos[selectedCategory].length);
-      setIsImageVisible(true);
+      setAnimateImage(true);
     }, 200);
-  };
+  }, [selectedCategory, groupedPhotos]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (!selectedCategory) return;
-    setIsImageVisible(false);
+    setAnimateImage(false);
     setTimeout(() => {
-      setSelectedIndex((prev) => (prev - 1 + groupedPhotos[selectedCategory].length) % groupedPhotos[selectedCategory].length);
-      setIsImageVisible(true);
+      setSelectedIndex(
+        (prev) => (prev - 1 + groupedPhotos[selectedCategory].length) % groupedPhotos[selectedCategory].length
+      );
+      setAnimateImage(true);
     }, 200);
-  };
+  }, [selectedCategory, groupedPhotos]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!selectedCategory) return;
+      if (e.key === 'ArrowRight') handleNext();
+      if (e.key === 'ArrowLeft') handlePrev();
+      if (e.key === 'Escape') closeModal();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedCategory, handleNext, handlePrev]);
 
   return (
     <section className="min-h-screen bg-white px-4 py-20 flex flex-col z-10 w-full">
@@ -118,7 +118,7 @@ const PhotosSection = () => {
                     <img
                       src={urlFor(photo.image).width(600).height(400).format('webp').url()}
                       alt={photo.title}
-                      className="w-full h-[420px] object-cover transform transition-transform duration-200 hover:scale-110 pointer-events-none select-none"
+                      className="w-full h-[420px] object-cover transform transition-transform duration-300 hover:scale-110"
                       draggable={false}
                       onContextMenu={(e) => e.preventDefault()}
                     />
@@ -132,7 +132,7 @@ const PhotosSection = () => {
 
       {selectedCategory && (
         <div
-          className="fixed inset-0 bg-white bg-opacity-90 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fadeIn"
+          className="fixed inset-0 bg-white bg-opacity-90 backdrop-blur-md flex items-center justify-center z-50 p-4"
           onClick={closeModal}
         >
           {/* Close button */}
@@ -147,7 +147,7 @@ const PhotosSection = () => {
             ×
           </button>
 
-          {/* Previous button */}
+          {/* Previous */}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -161,25 +161,22 @@ const PhotosSection = () => {
 
           {/* Image */}
           <div
-            className="relative flex items-center justify-center bg-white rounded-lg max-w-full w-[80vw] transition-all duration-300 transform scale-100"
-            style={{
-              maxHeight: '70vh',
-              height: '70vh',
-            }}
-            onClick={(e) => e.stopPropagation()}
+            className="relative flex items-center justify-center bg-white rounded-lg max-w-full w-[80vw]"
+            style={{ maxHeight: '70vh', height: '70vh', overflowY: 'hidden' }}
           >
             <img
+              key={groupedPhotos[selectedCategory][selectedIndex]._id}
               src={urlFor(groupedPhotos[selectedCategory][selectedIndex].image).format('webp').url()}
               alt={groupedPhotos[selectedCategory][selectedIndex].title}
-              className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${
-                isImageVisible ? 'opacity-100' : 'opacity-0'
+              className={`max-w-full max-h-full object-contain transition-all duration-300 ease-in-out ${
+                animateImage ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
               }`}
               draggable={false}
               onContextMenu={(e) => e.preventDefault()}
             />
           </div>
 
-          {/* Next button */}
+          {/* Next */}
           <button
             onClick={(e) => {
               e.stopPropagation();
