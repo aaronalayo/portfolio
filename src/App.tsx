@@ -53,6 +53,18 @@ const RouteChangeTracker = () => {
 
 
 function App() {
+  useEffect(() => {
+  const url = new URL(window.location.href);
+
+  // Remove specific UTM parameters you don't want
+  url.searchParams.delete('utm_source');
+  url.searchParams.delete('utm_medium');
+  url.searchParams.delete('utm_campaign');
+
+  // Update the address bar without reloading
+  window.history.replaceState({}, document.title, url.pathname + url.search);
+}, []);
+
   // This effect checks on app load if consent was *already* given in a previous session.
   useEffect(() => {
     const consent = localStorage.getItem('cookie_consent');
