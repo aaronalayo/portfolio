@@ -84,7 +84,7 @@ const Menu = () => {
       to={`/${section.value}`}
       onClick={() => setOpen(false)}
       className="
-        font-bold uppercase text-blue-900 transition
+        font-bold uppercase text-black transition
         text-2xl sm:text-4xl md:text-5xl
         max-w-[90vw]
       "
