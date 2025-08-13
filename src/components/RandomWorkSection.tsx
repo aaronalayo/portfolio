@@ -65,7 +65,7 @@ const RandomWorkSection = () => {
         React 19 SEO Tags for the HOMEPAGE: 
         This is the most important set of tags for your entire site.
       */}
-      <title>Red Malanga - Aaron ALAYO - Creative Portfolio (Home)</title>
+      <title>Red Malanga - Aaron ALAYO</title>
       <meta 
         name="description" 
         content="Welcome to the creative portfolio of Aaron ALAYO. Explore a curated collection of professional work in photography, video production, and software development." 
