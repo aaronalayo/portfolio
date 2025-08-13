@@ -59,7 +59,7 @@ function App() {
     let changed = false;
 
     // Loop through query parameters and delete UTM ones
-    url.searchParams.forEach((value, key) => {
+    url.searchParams.forEach((key) => {
       if (key.toLowerCase().startsWith("utm_")) {
         url.searchParams.delete(key);
         changed = true;
