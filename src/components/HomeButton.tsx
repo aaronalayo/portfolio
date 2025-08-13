@@ -6,7 +6,7 @@ function HomeButton() {
   return (
     <button
       onClick={() => navigate("/")}
-      className="fixed top-6 right-14 text-white bg-gray-800 px-4 rounded cursor-pointer z-50"
+      className="fixed top-6.5 right-14 text-white bg-gray-800 px-4 rounded cursor-pointer z-50"
     >
       /
     </button>

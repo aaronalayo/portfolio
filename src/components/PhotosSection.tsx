@@ -21,6 +21,7 @@ const PhotosSection = () => {
   const [groupedPhotos, setGroupedPhotos] = useState<{ [category: string]: Photo[] }>({});
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [isImageVisible, setIsImageVisible] = useState(true); // For fade transitions
 
   useEffect(() => {
     sanityClient
@@ -49,6 +50,24 @@ const PhotosSection = () => {
       });
   }, []);
 
+  // Keyboard navigation
+  useEffect(() => {
+    if (!selectedCategory) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        handleNext();
+      } else if (e.key === 'ArrowLeft') {
+        handlePrev();
+      } else if (e.key === 'Escape') {
+        closeModal();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedCategory, selectedIndex]);
+
   const openModal = (category: string, index: number) => {
     setSelectedCategory(category);
     setSelectedIndex(index);
@@ -61,12 +80,20 @@ const PhotosSection = () => {
 
   const handleNext = () => {
     if (!selectedCategory) return;
-    setSelectedIndex((prev) => (prev + 1) % groupedPhotos[selectedCategory].length);
+    setIsImageVisible(false);
+    setTimeout(() => {
+      setSelectedIndex((prev) => (prev + 1) % groupedPhotos[selectedCategory].length);
+      setIsImageVisible(true);
+    }, 200);
   };
 
   const handlePrev = () => {
     if (!selectedCategory) return;
-    setSelectedIndex((prev) => (prev - 1 + groupedPhotos[selectedCategory].length) % groupedPhotos[selectedCategory].length);
+    setIsImageVisible(false);
+    setTimeout(() => {
+      setSelectedIndex((prev) => (prev - 1 + groupedPhotos[selectedCategory].length) % groupedPhotos[selectedCategory].length);
+      setIsImageVisible(true);
+    }, 200);
   };
 
   return (
@@ -89,9 +116,11 @@ const PhotosSection = () => {
                 >
                   <div className="overflow-hidden">
                     <img
-                      src={urlFor(photo.image).width(600).height(400).url()}
+                      src={urlFor(photo.image).width(600).height(400).format('webp').url()}
                       alt={photo.title}
-                      className="w-full h-[420px] object-cover transform transition-transform duration-300 hover:scale-110"
+                      className="w-full h-[420px] object-cover transform transition-transform duration-200 hover:scale-110 pointer-events-none select-none"
+                      draggable={false}
+                      onContextMenu={(e) => e.preventDefault()}
                     />
                   </div>
                 </div>
@@ -101,70 +130,68 @@ const PhotosSection = () => {
         </div>
       ))}
 
-   {selectedCategory && (
-  <div
-   className="fixed inset-0 bg-white bg-opacity-90 backdrop-blur-md flex items-center justify-center z-50 p-4"
-    onClick={closeModal}
-    style={{ overflow: 'auto' }} // allows scrolling if content too big
-  >
-    {/* Close button fixed to viewport */}
-    <button
-      onClick={(e) => {
-        e.stopPropagation();
-        closeModal();
-      }}
-      className="fixed top-4 right-3 text-3xl text-black bg-white bg-opacity-70 rounded-full w-10 h-10 flex items-center justify-center hover:bg-opacity-90 transition"
-      aria-label="Close"
-    >
-      ×
-    </button>
+      {selectedCategory && (
+        <div
+          className="fixed inset-0 bg-white bg-opacity-90 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fadeIn"
+          onClick={closeModal}
+        >
+          {/* Close button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              closeModal();
+            }}
+            className="fixed top-4 right-3 text-3xl text-black bg-white bg-opacity-70 rounded-full w-10 h-10 flex items-center justify-center hover:bg-opacity-90 transition"
+            aria-label="Close"
+          >
+            ×
+          </button>
 
-    {/* Image container */}
-        {/* Previous button */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          handlePrev();
-        }}
-        className="absolute left-4 top-1/2 -translate-y-1/2 text-3xl text-black bg-white bg-opacity-70 h-10 flex items-center justify-center hover:bg-opacity-90 transition"
-        aria-label="Previous"
-      >
-        ‹
-      </button>
-    <div
-       className="relative flex items-center justify-center bg-white rounded-lg max-w-full w-[80vw]"
-      style={{
-        maxHeight: '70vh',  // reduced height
-        height: '70vh',
-        overflowY: 'hidden', // allows scrolling if content too big
-      }}
-    >
-  
+          {/* Previous button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handlePrev();
+            }}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-3xl text-black bg-white bg-opacity-70 h-10 flex items-center justify-center hover:bg-opacity-90 transition"
+            aria-label="Previous"
+          >
+            ‹
+          </button>
 
-      {/* Image */}
-      <img
-        src={groupedPhotos[selectedCategory][selectedIndex].image.asset.url}
-        alt={groupedPhotos[selectedCategory][selectedIndex].title}
-        className="max-w-full max-h-full object-contain"
-      />
+          {/* Image */}
+          <div
+            className="relative flex items-center justify-center bg-white rounded-lg max-w-full w-[80vw] transition-all duration-300 transform scale-100"
+            style={{
+              maxHeight: '70vh',
+              height: '70vh',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={urlFor(groupedPhotos[selectedCategory][selectedIndex].image).format('webp').url()}
+              alt={groupedPhotos[selectedCategory][selectedIndex].title}
+              className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${
+                isImageVisible ? 'opacity-100' : 'opacity-0'
+              }`}
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
+            />
+          </div>
 
-    </div>
-    
-      {/* Next button */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          handleNext();
-        }}
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-3xl text-black bg-white bg-opacity-70 h-10 flex items-center justify-center hover:bg-opacity-90 transition"
-        aria-label="Next"
-      >
-        ›
-      </button>
-  </div>
-)}
-
-
+          {/* Next button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleNext();
+            }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-3xl text-black bg-white bg-opacity-70 h-10 flex items-center justify-center hover:bg-opacity-90 transition"
+            aria-label="Next"
+          >
+            ›
+          </button>
+        </div>
+      )}
     </section>
   );
 };
