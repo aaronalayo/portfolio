@@ -53,25 +53,6 @@ const RouteChangeTracker = () => {
 
 
 function App() {
-  // Remove unwanted UTM parameters from the URL on first load
-  useEffect(() => {
-    const url = new URL(window.location.href);
-    let changed = false;
-
-    // Loop through query parameters and delete UTM ones
-    url.searchParams.forEach((key) => {
-      if (key.toLowerCase().startsWith("utm_")) {
-        url.searchParams.delete(key);
-        changed = true;
-      }
-    });
-
-    // Update the URL without reloading the page
-    if (changed) {
-      window.history.replaceState({}, document.title, url.pathname + url.search);
-    }
-  }, []);
-
   // This effect checks on app load if consent was *already* given in a previous session.
   useEffect(() => {
     const consent = localStorage.getItem('cookie_consent');
