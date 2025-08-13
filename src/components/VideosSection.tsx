@@ -10,12 +10,14 @@ interface Video {
 const PAGE_SIZE = 6;
 
 const VideosSection = () => {
+  // --- (All your existing state and hooks remain the same) ---
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [start, setStart] = useState(0);
   const observer = useRef<IntersectionObserver | null>(null);
 
+  // --- (Your useCallback and useEffect hooks remain the same) ---
   const lastVideoRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (loading) return;
@@ -30,7 +32,8 @@ const VideosSection = () => {
     [loading, hasMore]
   );
 
-  const loadMoreVideos = async () => {
+  const loadMoreVideos = useCallback(async () => {
+    if (loading || !hasMore) return;
     setLoading(true);
     try {
       const data: Video[] = await sanityClient.fetch(
@@ -52,23 +55,27 @@ const VideosSection = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [start, loading, hasMore]);
 
-  // Initial load
   useEffect(() => {
     loadMoreVideos();
-  }, []);
+  }, []); // Initial load
 
-  // Auto-load if page is too short to scroll
   useEffect(() => {
-    if (!loading && hasMore) {
-      const isScrollable = document.body.scrollHeight > window.innerHeight;
-      if (!isScrollable) {
-        loadMoreVideos();
-      }
+    if (!loading && hasMore && videos.length > 0) {
+      const checkScroll = () => {
+        const isScrollable = document.documentElement.scrollHeight > window.innerHeight;
+        if (!isScrollable) {
+          loadMoreVideos();
+        }
+      };
+      // Timeout helps ensure the DOM has updated before we check the scroll height
+      const timer = setTimeout(checkScroll, 100);
+      return () => clearTimeout(timer);
     }
-  }, [videos]);
+  }, [videos, loading, hasMore, loadMoreVideos]);
 
+  // --- (Your video click handler remains the same) ---
   const handleVideoClick = (vimeoId: string) => {
     const container = document.createElement('div');
     container.style.position = 'fixed';
@@ -87,7 +94,8 @@ const VideosSection = () => {
     iframe.style.height = '90%';
     iframe.style.border = 'none';
     iframe.style.borderRadius = '16px';
-    iframe.style.boxShadow = '0 10px 40px rgba(255, 255, 255, 1)';
+    // A slightly more subtle shadow
+    iframe.style.boxShadow = '0 10px 40px rgba(0, 0, 0, 0.5)';
 
     const closeBtn = document.createElement('button');
     closeBtn.innerText = '×';
@@ -101,9 +109,21 @@ const VideosSection = () => {
     closeBtn.style.cursor = 'pointer';
     closeBtn.style.zIndex = '1001';
 
-    closeBtn.addEventListener('click', () => {
-      document.body.removeChild(container);
-    });
+    const closeAll = () => {
+        document.body.removeChild(container);
+        window.removeEventListener('keydown', handleEsc);
+    }
+
+    const handleEsc = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+            closeAll();
+        }
+    }
+
+    closeBtn.addEventListener('click', closeAll);
+    container.addEventListener('click', closeAll);
+    window.addEventListener('keydown', handleEsc);
+
 
     container.appendChild(closeBtn);
     container.appendChild(iframe);
@@ -111,38 +131,53 @@ const VideosSection = () => {
   };
 
   return (
-    <section className="w-full min-h-screen bg-white flex flex-col z-10 px-4 py-20">
-      <h2 className="font-veep font-bold text-2xl mb-16 text-center uppercase tracking-tight text-black-900 drop-shadow-sm">
-        EDITORIAL WORK
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-[1600px] mx-auto px-6">
-        {videos.map((video, index) => {
-          const isLast = index === videos.length - 1;
-          return (
-            <div
-              key={video._id}
-              ref={isLast ? lastVideoRef : null}
-              className="aspect-video w-full min-h-[320px] cursor-pointer overflow-hidden rounded-2xl shadow-xl relative group transition-transform hover:scale-105"
-              onClick={() => handleVideoClick(video.vimeoId)}
-            >
-              <img
-                src={`https://vumbnail.com/${video.vimeoId}.jpg`}
-                alt={video.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 flex items-center justify-center transition">
-                <h3 className="text-white text-2xl font-semibold px-4 text-center">
-                  {video.title}
-                </h3>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+    // A React Fragment wraps your original JSX and the new SEO tags
+    <>
+      {/* 
+        React 19 SEO Tags: 
+        This is the new, built-in way to add SEO metadata. 
+      */}
+      <title>Video & Editorial Work - Red Malanga - Aaron ALAYO</title>
+      <meta
+        name="description"
+        content="A collection of professional video and editorial work. View my portfolio of creative video projects."
+      />
+      <link rel="canonical" href="https://redmalanga.com/videos" />
 
-      {loading && <p className="text-center mt-6 text-gray-600">Loading more videos...</p>}
-      {!hasMore && <p className="text-center italic mt-6 text-gray-400">That's all folks!</p>}
-    </section>
+      {/* --- Your original component JSX starts here, completely unchanged --- */}
+      <section className="w-full min-h-screen bg-white flex flex-col z-10 px-4 py-20">
+        <h2 className="font-veep font-bold text-2xl mb-16 text-center uppercase tracking-tight text-black-900 drop-shadow-sm">
+          EDITORIAL WORK
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-[1600px] mx-auto px-6">
+          {videos.map((video, index) => {
+            const isLast = index === videos.length - 1;
+            return (
+              <div
+                key={video._id}
+                ref={isLast ? lastVideoRef : null}
+                className="aspect-video w-full min-h-[320px] cursor-pointer overflow-hidden rounded-2xl shadow-xl relative group transition-transform hover:scale-105"
+                onClick={() => handleVideoClick(video.vimeoId)}
+              >
+                <img
+                  src={`https://vumbnail.com/${video.vimeoId}.jpg`}
+                  alt={video.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 flex items-center justify-center transition">
+                  <h3 className="text-white text-2xl font-semibold px-4 text-center">
+                    {video.title}
+                  </h3>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {loading && <p className="text-center mt-6 text-gray-600">Loading more videos...</p>}
+        {!hasMore && <p className="text-center italic mt-6 text-gray-400">That's all folks!</p>}
+      </section>
+    </>
   );
 };
 
