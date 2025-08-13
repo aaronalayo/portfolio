@@ -53,7 +53,7 @@ const PhotosSection = () => {
   const openModal = (category: string, index: number) => {
     setSelectedCategory(category);
     setSelectedIndex(index);
-    setTimeout(() => setAnimateImage(true), 50); // allow fade-in after modal opens
+    setTimeout(() => setAnimateImage(true), 300); // allow fade-in after modal opens
   };
 
   const closeModal = () => {
@@ -64,25 +64,20 @@ const PhotosSection = () => {
     }, 200);
   };
 
-  const handleNext = useCallback(() => {
+  const handleNext = () => {
     if (!selectedCategory) return;
     setAnimateImage(false);
-    setTimeout(() => {
-      setSelectedIndex((prev) => (prev + 1) % groupedPhotos[selectedCategory].length);
-      setAnimateImage(true);
-    }, 200);
-  }, [selectedCategory, groupedPhotos]);
+    setSelectedIndex((prev) => (prev + 1) % groupedPhotos[selectedCategory].length);
+    requestAnimationFrame(() => setAnimateImage(true)); // no visible gap
+  };
 
-  const handlePrev = useCallback(() => {
+  const handlePrev = () => {
     if (!selectedCategory) return;
     setAnimateImage(false);
-    setTimeout(() => {
-      setSelectedIndex(
-        (prev) => (prev - 1 + groupedPhotos[selectedCategory].length) % groupedPhotos[selectedCategory].length
-      );
-      setAnimateImage(true);
-    }, 200);
-  }, [selectedCategory, groupedPhotos]);
+    setSelectedIndex((prev) => (prev - 1 + groupedPhotos[selectedCategory].length) % groupedPhotos[selectedCategory].length);
+    requestAnimationFrame(() => setAnimateImage(true));
+  };
+
 
   // Keyboard navigation
   useEffect(() => {
@@ -168,9 +163,9 @@ const PhotosSection = () => {
               key={groupedPhotos[selectedCategory][selectedIndex]._id}
               src={urlFor(groupedPhotos[selectedCategory][selectedIndex].image).format('webp').url()}
               alt={groupedPhotos[selectedCategory][selectedIndex].title}
-              className={`max-w-full max-h-full object-contain transition-all duration-300 ease-in-out ${
-                animateImage ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-              }`}
+              className={`max-w-full max-h-full object-contain transition-all duration-300 ease-out ${animateImage ? 'opacity-100 scale-100' : 'opacity-0 scale-98'
+                }`}
+
               draggable={false}
               onContextMenu={(e) => e.preventDefault()}
             />
