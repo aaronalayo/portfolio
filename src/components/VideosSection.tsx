@@ -15,8 +15,6 @@ const VideosSection = () => {
   const [hasMore, setHasMore] = useState(true);
   const [start, setStart] = useState(0);
 
-  // REMOVED: The IntersectionObserver logic (`lastVideoRef` and its useRef) is no longer needed.
-
   const loadMoreVideos = useCallback(async () => {
     if (loading || !hasMore) return;
     setLoading(true);
@@ -39,15 +37,11 @@ const VideosSection = () => {
     }
   }, [start, loading, hasMore]);
 
-  // This useEffect now only handles the very first load.
   useEffect(() => {
     loadMoreVideos();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // REMOVED: The useEffect that checked for scrollability is no longer needed.
-
   const handleVideoClick = (vimeoId: string) => {
-    // ... (Your handleVideoClick function remains exactly the same)
     const container = document.createElement('div');
     container.style.position = 'fixed';
     container.style.inset = '0';
@@ -56,8 +50,13 @@ const VideosSection = () => {
     container.style.display = 'flex';
     container.style.alignItems = 'center';
     container.style.justifyContent = 'center';
+    
     const iframe = document.createElement('iframe');
-    iframe.src = `https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=0`;
+    
+    // --- THIS IS THE UPDATED URL ---
+    // We add parameters to hide the title, byline, and portrait for a minimal look.
+    iframe.src = `https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=0&title=0&byline=0&portrait=0&dnt=1`;
+    
     iframe.allow = 'autoplay; fullscreen';
     iframe.allowFullscreen = true;
     iframe.style.width = '90%';
@@ -65,6 +64,7 @@ const VideosSection = () => {
     iframe.style.border = 'none';
     iframe.style.borderRadius = '16px';
     iframe.style.boxShadow = '0 10px 40px rgba(0, 0, 0, 0.5)';
+    
     const closeBtn = document.createElement('button');
     closeBtn.innerText = '×';
     closeBtn.style.position = 'absolute';
@@ -76,11 +76,13 @@ const VideosSection = () => {
     closeBtn.style.border = 'none';
     closeBtn.style.cursor = 'pointer';
     closeBtn.style.zIndex = '1001';
+    
     const closeAll = () => { document.body.removeChild(container); window.removeEventListener('keydown', handleEsc); };
     const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') closeAll(); };
     closeBtn.addEventListener('click', closeAll);
     container.addEventListener('click', closeAll);
     window.addEventListener('keydown', handleEsc);
+    
     container.appendChild(closeBtn);
     container.appendChild(iframe);
     document.body.appendChild(container);
@@ -98,7 +100,6 @@ const VideosSection = () => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-[1600px] mx-auto px-6">
           {videos.map((video) => (
-            // The `ref` is no longer needed on the video items
             <div
               key={video._id}
               className="aspect-video w-full cursor-pointer overflow-hidden rounded-2xl shadow-xl relative group transition-transform hover:scale-105"
@@ -112,15 +113,14 @@ const VideosSection = () => {
           ))}
         </div>
 
-        {/* --- ADDED: Load More Button Section --- */}
         <div className="text-center mt-12">
           {hasMore && (
             <button
               onClick={loadMoreVideos}
               disabled={loading}
-              className="bg-gray-800 text-white font-bold py-3 px-6 rounded-lg text-base hover:bg-red-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300"
+              className="bg-red-600 text-white font-bold py-3 px-8 rounded-lg text-base hover:bg-red-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300"
             >
-              {loading ? 'Loading...' : '+'}
+              {loading ? 'Loading...' : 'Load More'}
             </button>
           )}
           {!hasMore && (
