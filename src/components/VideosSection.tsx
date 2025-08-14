@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import sanityClient from '../sanityClient';
 
 interface Video {
@@ -10,27 +10,12 @@ interface Video {
 const PAGE_SIZE = 6;
 
 const VideosSection = () => {
-  // --- (All your existing state and hooks remain the same) ---
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [start, setStart] = useState(0);
-  const observer = useRef<IntersectionObserver | null>(null);
 
-  // --- (Your useCallback and useEffect hooks remain the same) ---
-  const lastVideoRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (loading) return;
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          loadMoreVideos();
-        }
-      });
-      if (node) observer.current.observe(node);
-    },
-    [loading, hasMore]
-  );
+  // REMOVED: The IntersectionObserver logic (`lastVideoRef` and its useRef) is no longer needed.
 
   const loadMoreVideos = useCallback(async () => {
     if (loading || !hasMore) return;
@@ -41,11 +26,8 @@ const VideosSection = () => {
           _id, title, vimeoId
         }`
       );
-
       if (data.length > 0) {
-        setVideos((prev) =>
-          [...prev, ...data].filter((v, i, self) => self.findIndex(x => x._id === v._id) === i)
-        );
+        setVideos((prev) => [...prev, ...data].filter((v, i, self) => self.findIndex(x => x._id === v._id) === i));
         setStart((prev) => prev + PAGE_SIZE);
       } else {
         setHasMore(false);
@@ -57,26 +39,15 @@ const VideosSection = () => {
     }
   }, [start, loading, hasMore]);
 
+  // This useEffect now only handles the very first load.
   useEffect(() => {
     loadMoreVideos();
-  }, []); // Initial load
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    if (!loading && hasMore && videos.length > 0) {
-      const checkScroll = () => {
-        const isScrollable = document.documentElement.scrollHeight > window.innerHeight;
-        if (!isScrollable) {
-          loadMoreVideos();
-        }
-      };
-      // Timeout helps ensure the DOM has updated before we check the scroll height
-      const timer = setTimeout(checkScroll, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [videos, loading, hasMore, loadMoreVideos]);
+  // REMOVED: The useEffect that checked for scrollability is no longer needed.
 
-  // --- (Your video click handler remains the same) ---
   const handleVideoClick = (vimeoId: string) => {
+    // ... (Your handleVideoClick function remains exactly the same)
     const container = document.createElement('div');
     container.style.position = 'fixed';
     container.style.inset = '0';
@@ -85,7 +56,6 @@ const VideosSection = () => {
     container.style.display = 'flex';
     container.style.alignItems = 'center';
     container.style.justifyContent = 'center';
-
     const iframe = document.createElement('iframe');
     iframe.src = `https://player.vimeo.com/video/${vimeoId}?autoplay=1&muted=0`;
     iframe.allow = 'autoplay; fullscreen';
@@ -94,9 +64,7 @@ const VideosSection = () => {
     iframe.style.height = '90%';
     iframe.style.border = 'none';
     iframe.style.borderRadius = '16px';
-    // A slightly more subtle shadow
     iframe.style.boxShadow = '0 10px 40px rgba(0, 0, 0, 0.5)';
-
     const closeBtn = document.createElement('button');
     closeBtn.innerText = '×';
     closeBtn.style.position = 'absolute';
@@ -108,74 +76,57 @@ const VideosSection = () => {
     closeBtn.style.border = 'none';
     closeBtn.style.cursor = 'pointer';
     closeBtn.style.zIndex = '1001';
-
-    const closeAll = () => {
-        document.body.removeChild(container);
-        window.removeEventListener('keydown', handleEsc);
-    }
-
-    const handleEsc = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
-            closeAll();
-        }
-    }
-
+    const closeAll = () => { document.body.removeChild(container); window.removeEventListener('keydown', handleEsc); };
+    const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') closeAll(); };
     closeBtn.addEventListener('click', closeAll);
     container.addEventListener('click', closeAll);
     window.addEventListener('keydown', handleEsc);
-
-
     container.appendChild(closeBtn);
     container.appendChild(iframe);
     document.body.appendChild(container);
   };
 
   return (
-    // A React Fragment wraps your original JSX and the new SEO tags
     <>
-      {/* 
-        React 19 SEO Tags: 
-        This is the new, built-in way to add SEO metadata. 
-      */}
       <title>Video & Editorial Work - Red Malanga - Aaron ALAYO</title>
-      <meta
-        name="description"
-        content="A collection of professional video and editorial work. View my portfolio of creative video projects."
-      />
+      <meta name="description" content="A collection of professional video and editorial work. View my portfolio of creative video projects." />
       <link rel="canonical" href="https://redmalanga.com/videos" />
 
-      {/* --- Your original component JSX starts here, completely unchanged --- */}
       <section className="w-full min-h-screen bg-white flex flex-col z-10 px-4 py-20">
         <h2 className="font-veep font-bold text-2xl mb-16 text-center uppercase tracking-tight text-black-900 drop-shadow-sm">
           EDITORIAL WORK
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-[1600px] mx-auto px-6">
-          {videos.map((video, index) => {
-            const isLast = index === videos.length - 1;
-            return (
-              <div
-                key={video._id}
-                ref={isLast ? lastVideoRef : null}
-                className="aspect-video w-full min-h-[320px] cursor-pointer overflow-hidden rounded-2xl shadow-xl relative group transition-transform hover:scale-105"
-                onClick={() => handleVideoClick(video.vimeoId)}
-              >
-                <img
-                  src={`https://vumbnail.com/${video.vimeoId}.jpg`}
-                  alt={video.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 flex items-center justify-center transition">
-                  <h3 className="text-white text-2xl font-semibold px-4 text-center">
-                    {video.title}
-                  </h3>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-[1600px] mx-auto px-6">
+          {videos.map((video) => (
+            // The `ref` is no longer needed on the video items
+            <div
+              key={video._id}
+              className="aspect-video w-full cursor-pointer overflow-hidden rounded-2xl shadow-xl relative group transition-transform hover:scale-105"
+              onClick={() => handleVideoClick(video.vimeoId)}
+            >
+              <img src={`https://vumbnail.com/${video.vimeoId}.jpg`} alt={video.title} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 flex items-center justify-center transition">
+                <h3 className="text-white text-2xl font-semibold px-4 text-center">{video.title}</h3>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
 
-        {loading && <p className="text-center mt-6 text-gray-600">Loading more videos...</p>}
-        {!hasMore && <p className="text-center italic mt-6 text-gray-400">That's all folks!</p>}
+        {/* --- ADDED: Load More Button Section --- */}
+        <div className="text-center mt-12">
+          {hasMore && (
+            <button
+              onClick={loadMoreVideos}
+              disabled={loading}
+              className="bg-gray-800 text-white font-bold py-3 px-6 rounded-lg text-base hover:bg-red-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300"
+            >
+              {loading ? 'Loading...' : '+'}
+            </button>
+          )}
+          {!hasMore && (
+             <p className="text-center italic mt-6 text-gray-500">That's all folks!</p>
+          )}
+        </div>
       </section>
     </>
   );
