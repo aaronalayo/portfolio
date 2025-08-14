@@ -4,10 +4,9 @@
 
 @import "tailwindcss";
 @import "tw-animate-css";
-/* @tailwind base;
-
+@tailwind base;
 @tailwind components;
-@tailwind utilities; */
+@tailwind utilities;
 /* @custom-variant dark (&:is(.dark *)); */
 @layer utilities {
   .animate-fadeIn {

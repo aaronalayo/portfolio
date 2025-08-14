@@ -3,19 +3,32 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+  <!-- 
+    --- START: CORRECT FAVICON SETUP ---
+    The old links are removed and replaced with this comprehensive block.
+  -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <!-- --- END: CORRECT FAVICON SETUP --- -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap"
     rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Red Malanga - Aaron Alayo</title>
-  <link rel="icon" href="/favicon.ico" />
+  
+  <!-- This static title is a good fallback, but will be correctly overridden by React 19 for each page -->
+  <title>Red Malanga - Aaron ALAYO</title>
 </head>
 
 <body>
   <div id="root"></div>
+
+  <!-- This UTM-stripping script is great! Keep it. -->
   <script>
     (function () {
       var url = new URL(window.location.href);
@@ -33,6 +46,8 @@
       }
     })();
   </script>
+
+  <!-- Your React app entry point -->
   <script type="module" src="/src/main.tsx"></script>
 </body>
 
