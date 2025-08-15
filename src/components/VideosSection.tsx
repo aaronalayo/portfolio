@@ -118,9 +118,9 @@ const VideosSection = () => {
             <button
               onClick={loadMoreVideos}
               disabled={loading}
-              className="bg-red-600 text-white font-bold py-3 px-8 rounded-lg text-base hover:bg-red-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300"
+              className="bg-gray-900 text-white font-bold py-3 px-6 rounded-lg text-base cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300"
             >
-              {loading ? 'Loading...' : 'Load More'}
+              {loading ? 'Loading...' : '+'}
             </button>
           )}
           {!hasMore && (
