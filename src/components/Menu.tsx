@@ -52,7 +52,7 @@ const Menu = () => {
       </div>
    
       <div className={`fixed inset-0 z-40 bg-white backdrop-blur-md transition-opacity duration-300 ${open ? 'flex' : 'hidden'} flex-col items-center justify-center`}>
-        <button onClick={() => setOpen(false)} aria-label="Close menu" className="absolute top-4 right-4 z-50">
+        <button onClick={() => setOpen(false)} aria-label="Close menu" className="absolute top-4 right-2 z-50">
           <CloseIcon size={40} />
         </button>
 
