@@ -16,7 +16,25 @@ const RandomWorkSection = () => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const playerRef = useRef<Player | null>(null);
 
-  // ... (Your useEffect for fetching data and the toggleMute function remain the same) ...
+  useEffect(() => {
+    const query = `*[_type == "video" && excludeFromHomepage != true]{ _id, title, vimeoId }`;
+    sanityClient.fetch(query)
+      .then((eligibleVideos: Video[]) => {
+        if (eligibleVideos.length > 0) {
+          const random = eligibleVideos[Math.floor(Math.random() * eligibleVideos.length)];
+          setRandomVideo(random);
+        } else { setLoading(false); }
+      })
+      .catch(err => { console.error("Failed to fetch videos from Sanity:", err); setLoading(false); });
+  }, []);
+
+  useEffect(() => { if (iframeRef.current) { playerRef.current = new Player(iframeRef.current); } }, [randomVideo]);
+
+  const toggleMute = () => {
+    const newMutedState = !isMuted;
+    setIsMuted(newMutedState);
+    if (playerRef.current) { playerRef.current.setVolume(newMutedState ? 0 : 1); }
+  };
 
   return (
     <>
@@ -31,39 +49,28 @@ const RandomWorkSection = () => {
           <div className="absolute inset-0 w-full h-full overflow-hidden z-10">
             <iframe 
               ref={iframeRef} 
-              // --- UPDATED URL for better performance and privacy ---
-              src={`https://player.vimeo.com/video/${randomVideo.vimeoId}?autoplay=1&muted=1&controls=0&quality=1080p&autopause=0&loop=1&transparent=0&dnt=1`}
+              src={`https://player.vimeo.com/video/${randomVideo.vimeoId}?autoplay=1&muted=1&controls=0&quality=720p&autopause=0&loop=1&transparent=0&dnt=1`}
               title={randomVideo.title} 
-              
-              // --- ADDED ATTRIBUTES for mobile compatibility ---
               allow="autoplay; fullscreen"
               allowFullScreen
-              // This is the key for preventing fullscreen takeover on iOS
-              playsInline 
-              
+              playsInline // The error for this line will now be gone
               onLoad={() => setLoading(false)}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300vw] h-[168.75vw] min-h-screen md:w-[177.77vh] md:h-[100vh] min-w-full"
+              className="absolute top-1-2 left-1-2 -translate-x-1-2 -translate-y-1-2 w-[300vw] h-[168.75vw] min-h-screen md:w-[177.77vh] md:h-[100vh] min-w-full"
               style={{ border: 'none' }} 
             />
           </div> 
         )}
         
-        {/* --- Text is now inside a separate container for z-index safety --- */}
         <div className="absolute inset-0 z-20 pointer-events-none">
-          <div className="flex flex-col items-center justify-start h-full pt-24 md:pt-32 text-center text-white p-4">
-            <h1 className="font-veep text-3xl md:text-4xl uppercase tracking-wider drop-shadow-xl">
+          <div className="flex justify-center h-24 items-center">
+             <h1 className="font-veep text-3xl md:text-4xl text-white uppercase tracking-wider drop-shadow-xl">
               Red Malanga
             </h1>
           </div>
         </div>
 
-        {/* --- Mute button is also in a separate container --- */}
         <div className="absolute inset-0 z-20">
-          <button 
-            onClick={toggleMute} 
-            aria-label={isMuted ? 'Unmute video' : 'Mute video'} 
-            className="absolute bottom-5 right-5 text-white opacity-60 hover:opacity-100 transition"
-          >
+          <button onClick={toggleMute} aria-label={isMuted ? 'Unmute video' : 'Mute video'} className="absolute bottom-5 right-5 text-white opacity-60 hover:opacity-100 transition">
             {isMuted ? <MutedIcon /> : <UnmutedIcon />}
           </button>
         </div>
