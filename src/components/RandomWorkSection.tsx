@@ -86,7 +86,7 @@ const RandomWorkSection = () => {
             <iframe
               {...{ // Using the `as any` assertion to bypass the TypeScript error for playsInline
                 ref: iframeRef,
-                src: `https://player.vimeo.com/video/${randomVideo.vimeoId}?autoplay=1&muted=1&controls=0&quality=720p&autopause=0&loop=1&transparent=0&dnt=1`,
+                src: `https://player.vimeo.com/video/${randomVideo.vimeoId}?autoplay=1&muted=1&background=1&quality=1080p`,
                 title: randomVideo.title,
                 allow: "autoplay; fullscreen",
                 allowFullScreen: true,
