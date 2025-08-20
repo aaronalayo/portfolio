@@ -171,6 +171,11 @@ body {
   font-family: 'Bodoni', serif;
 }
 @layer utilities {
+  @layer utilities {
+  .text-deep-shadow {
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+  }
+}
   .sr-only {
     position: absolute;
     width: 1px;
