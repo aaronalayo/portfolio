@@ -199,3 +199,10 @@ body {
   min-height: 150%;
   transform: translateX(-50%) translateY(-50%);
 }
+
+@media (orientation: portrait) {
+  .video-container-responsive {
+    width: 600vw;
+    height: 100%;
+  }
+}

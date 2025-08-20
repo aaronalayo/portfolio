@@ -46,20 +46,18 @@ const RandomWorkSection = () => {
         {loading && ( <div className="absolute inset-0 flex items-center justify-center z-30 bg-black"><StarLoader /></div> )}
         
         {randomVideo && (
-          // --- THIS IS THE FIX ---
-          // This container now controls the sizing and aspect ratio.
-          <div className="relative w-full h-auto aspect-video md:w-auto md:h-full">
+          // --- THE FINAL FIX ---
+          // This container now has our new responsive class
+          <div className="relative w-full h-auto aspect-video video-container-responsive">
             <iframe
               {...{ 
                 ref: iframeRef,
-                // The URL is now simpler. `background=1` is removed.
-                src: `https://player.vimeo.com/video/${randomVideo.vimeoId}?autoplay=1&muted=1&controls=0&quality=1080p&autopause=0&loop=1&transparent=0&dnt=1`,
+                src: `https://player.vimeo.com/video/${randomVideo.vimeoId}?autoplay=1&muted=1&controls=0&quality=720p&autopause=0&loop=1&transparent=0&dnt=1`,
                 title: randomVideo.title,
                 allow: "autoplay; fullscreen",
                 allowFullScreen: true,
                 playsInline: true, 
                 onLoad: () => setLoading(false),
-                // The iframe is now simpler, just filling its parent.
                 className: "w-full h-full",
                 style: { border: 'none' }
               } as any}
