@@ -90,7 +90,6 @@ const RandomWorkSection = () => {
                 title: randomVideo.title,
                 allow: "autoplay; fullscreen",
                 allowFullScreen: true,
-                playsInline: true,
                 onLoad: () => setLoading(false),
                 className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300vw] h-[168.75vw] min-h-screen md:w-[177.77vh] md:h-[100vh] min-w-full",
                 style: { border: 'none' }
