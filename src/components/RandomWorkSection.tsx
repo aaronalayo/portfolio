@@ -42,32 +42,32 @@ const RandomWorkSection = () => {
       <meta name="description" content="Welcome to the creative portfolio of Aaron Alayo. Explore a curated collection of professional work in photography, video production, and software development." />
       <link rel="canonical" href="https://redmalanga.com/" />
 
-      <section className="relative w-full h-screen overflow-hidden bg-black">
+      <section className="relative w-full h-screen overflow-hidden bg-black flex items-center justify-center">
         {loading && ( <div className="absolute inset-0 flex items-center justify-center z-30 bg-black"><StarLoader /></div> )}
         
         {randomVideo && (
-          <div className="absolute inset-0 w-full h-full overflow-hidden z-10">
+          // --- THIS IS THE FIX ---
+          // This container now controls the sizing and aspect ratio.
+          <div className="relative w-full h-auto aspect-video md:w-auto md:h-full">
             <iframe
               {...{ 
                 ref: iframeRef,
-                // Make sure the `&background=1` parameter is present. It helps the player adapt.
-                src: `https://player.vimeo.com/video/${randomVideo.vimeoId}?autoplay=1&muted=1&background=1&quality=720p&autopause=0&loop=1&transparent=0&dnt=1`,
+                // The URL is now simpler. `background=1` is removed.
+                src: `https://player.vimeo.com/video/${randomVideo.vimeoId}?autoplay=1&muted=1&controls=0&quality=1080p&autopause=0&loop=1&transparent=0&dnt=1`,
                 title: randomVideo.title,
                 allow: "autoplay; fullscreen",
                 allowFullScreen: true,
                 playsInline: true, 
                 onLoad: () => setLoading(false),
-                // --- THIS IS THE FIX ---
-                // We are bringing back the robust, calculated classes for the iframe.
-                // This is the guaranteed way to force a 16:9 video to cover a 9:16 screen.
-                className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300vw] h-[168.75vw] min-h-screen md:w-[177.77vh] md:h-[100vh] min-w-full",
+                // The iframe is now simpler, just filling its parent.
+                className: "w-full h-full",
                 style: { border: 'none' }
               } as any}
             />
           </div>
         )}
         
-        {/* The text and mute button overlays remain the same */}
+        {/* Text and mute button overlays remain the same, but are now relative to the main section */}
         <div className="absolute inset-0 z-20 pointer-events-none">
           <div className="flex justify-center h-20 items-center">
              <h1 className="font-veep text-2xl md:text-4xl text-white uppercase tracking-wider drop-shadow-xl">
@@ -75,7 +75,6 @@ const RandomWorkSection = () => {
             </h1>
           </div>
         </div>
-
         <div className="absolute inset-0 z-20">
           <button onClick={toggleMute} aria-label={isMuted ? 'Unmute video' : 'Mute video'} className="absolute bottom-5 right-5 text-white opacity-60 hover:opacity-100 transition">
             {isMuted ? <MutedIcon /> : <UnmutedIcon />}
