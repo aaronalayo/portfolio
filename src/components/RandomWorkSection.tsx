@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import sanityClient from '../sanityClient';
 import Player from '@vimeo/player';
 
-// --- Icon Components ---
+// --- (Your icons and other components remain the same) ---
 const UnmutedIcon = ({ className = 'w-5 h-5' }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.536 8.464a5 5 0 010 7.072M17.657 6.343a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z"></path>
@@ -15,19 +15,11 @@ const MutedIcon = ({ className = 'w-5 h-5' }) => (
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 14l-2-2m0 0l-2-2m2 2l2-2m-2 2l2 2"></path>
   </svg>
 );
-
-// --- Interface for our video data ---
-interface Video {
-  _id: string;
-  title: string;
-  vimeoId: string;
-}
-
-// --- Loading animation component ---
+interface Video { _id: string; title: string; vimeoId: string; }
 const StarLoader = () => (
   <div className="flex items-center justify-center w-full h-full">
     <svg style={{ animation: "spin 3s linear infinite" }} className="text-white" viewBox="0 0 24 24" width={80} height={80} fill="white" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 17.27L18.18 21l--1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
     </svg>
     <style>{`
       @keyframes spin {
@@ -38,7 +30,6 @@ const StarLoader = () => (
   </div>
 );
 
-// --- Main Homepage Component ---
 const RandomWorkSection = () => {
   const [randomVideo, setRandomVideo] = useState<Video | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,9 +38,7 @@ const RandomWorkSection = () => {
   const playerRef = useRef<Player | null>(null);
 
   useEffect(() => {
-    // This efficient query filters the videos directly in Sanity
     const query = `*[_type == "video" && excludeFromHomepage != true]{ _id, title, vimeoId }`;
-
     sanityClient.fetch(query)
       .then((eligibleVideos: Video[]) => {
         if (eligibleVideos.length > 0) {
@@ -66,7 +55,6 @@ const RandomWorkSection = () => {
   }, []);
 
   useEffect(() => {
-    // Initialize the Vimeo Player API when the iframe is ready
     if (iframeRef.current) {
       playerRef.current = new Player(iframeRef.current);
     }
@@ -82,32 +70,27 @@ const RandomWorkSection = () => {
 
   return (
     <>
-      {/* SEO Metadata for the Homepage */}
       <title>Red Malanga - Aaron ALAYO - Creative Portfolio</title>
       <meta name="description" content="Welcome to the creative portfolio of Aaron Alayo. Explore a curated collection of professional work in photography, video production, and software development." />
       <link rel="canonical" href="https://redmalanga.com/" />
 
-      {/* Main container for the full-screen section */}
       <section className="relative w-full h-screen overflow-hidden bg-black">
-        {/* Loading overlay */}
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center z-30 bg-black">
             <StarLoader />
           </div>
         )}
         
-        {/* Video Player */}
         {randomVideo && (
-          // This parent container acts as the "window" for the massive iframe
           <div className="absolute inset-0 w-full h-full overflow-hidden z-10">
             <iframe
-              {...{ // We use this object spread and the `as any` assertion to bypass the TypeScript error
+              {...{ // Using the `as any` assertion to bypass the TypeScript error for playsInline
                 ref: iframeRef,
                 src: `https://player.vimeo.com/video/${randomVideo.vimeoId}?autoplay=1&muted=1&controls=0&quality=720p&autopause=0&loop=1&transparent=0&dnt=1`,
                 title: randomVideo.title,
                 allow: "autoplay; fullscreen",
                 allowFullScreen: true,
-                playsInline: true, // This is the prop that was causing the error
+                playsInline: true,
                 onLoad: () => setLoading(false),
                 className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300vw] h-[168.75vw] min-h-screen md:w-[177.77vh] md:h-[100vh] min-w-full",
                 style: { border: 'none' }
@@ -116,16 +99,17 @@ const RandomWorkSection = () => {
           </div>
         )}
         
-        {/* Text Overlay Container */}
         <div className="absolute inset-0 z-20 pointer-events-none">
-          <div className="flex justify-center h-24 items-center">
-             <h1 className="font-veep text-3xl md:text-4xl text-white uppercase tracking-wider drop-shadow-xl">
+          {/* --- THE FIXES ARE HERE --- */}
+          {/* 1. The container height is reduced to h-20 to move the text up. */}
+          <div className="flex justify-center h-20 items-center">
+             {/* 2. The font size is reduced on mobile (text-2xl) and scales up on desktop (md:text-4xl). */}
+             <h1 className="font-veep text-2xl md:text-4xl text-white uppercase tracking-wider drop-shadow-xl">
               Red Malanga
             </h1>
           </div>
         </div>
 
-        {/* Mute/Unmute Button Container */}
         <div className="absolute inset-0 z-20">
           <button
             onClick={toggleMute}
