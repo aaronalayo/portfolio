@@ -183,3 +183,14 @@ body {
     border-width: 0;
   }
 }
+
+.video-cover {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 100vh;
+  min-width: 100%;
+  min-height: 150%;
+  transform: translateX(-50%) translateY(-50%);
+}

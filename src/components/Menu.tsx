@@ -51,7 +51,7 @@ const Menu = () => {
         </button>
       </div>
    
-      <div className={`fixed inset-0 z-40 bg-white/80 backdrop-blur-md transition-opacity duration-300 ${open ? 'flex' : 'hidden'} flex-col items-center justify-center`}>
+      <div className={`fixed inset-0 z-40 bg-white backdrop-blur-md transition-opacity duration-300 ${open ? 'flex' : 'hidden'} flex-col items-center justify-center`}>
         <button onClick={() => setOpen(false)} aria-label="Close menu" className="absolute top-4 right-4 z-50">
           <CloseIcon size={40} />
         </button>
@@ -65,7 +65,7 @@ const Menu = () => {
               onClick={() => setOpen(false)}
               // This `title` attribute creates the hover tooltip for usability
               title={section.label}
-              className="text-blue-900 transition-transform duration-300 hover:scale-125"
+              className="text-black transition-transform duration-300 hover:scale-125"
             >
               {/* Render the icon component instead of the text label */}
               {section.icon}

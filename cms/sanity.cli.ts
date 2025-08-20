@@ -1,7 +1,7 @@
 import {defineCliConfig} from 'sanity/cli'
 
 export default defineCliConfig({
-  studioHost: 'https://redmalanga.sanity.studio', // Optional: specify your custom studio host
+  studioHost: 'redmalanga', // Optional: specify your custom studio host
   api: {
     projectId: 'or9vpa2z',
     dataset: 'production',
