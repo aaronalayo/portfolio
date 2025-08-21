@@ -1,6 +1,5 @@
 // src/components/RandomWorkSection.tsx
 import { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom'; // Import the Link component
 import sanityClient from '../sanityClient';
 import Player from '@vimeo/player';
 
