@@ -12,9 +12,8 @@ import VideosSection from './components/VideosSection';
 import PhotosSection from './components/PhotosSection';
 // ... other component imports
 import RandomWorkSection from './components/RandomWorkSection';
-import Menu from './components/Menu';
+import Header from './components/Header'; // <-- IMPORT THE NEW HEADER
 import Footer from './components/Footer';
-import HomeButton from './components/HomeButton';
 import AboutSection from './components/AboutSection';
 import DeveloperWorkSection from './components/DeveloperWorkSection';
 import ContactSection from './components/ContactSection';
@@ -77,10 +76,9 @@ function App() {
     <Router>
       <RouteChangeTracker />
       <div className="flex flex-col min-h-screen">
-        <Menu />
+        <Header />
         <main className="flex-grow flex">
           <div className="w-full bg-white rounded-2xl shadow-xl">
-            <HomeButton />
             <Routes>
               <Route path="/" element={<RandomWorkSection />} />
               <Route path="/videos" element={<VideosSection />} />
