@@ -13,7 +13,7 @@ const Header = () => {
       
       {/* --- THIS IS THE FIX: A Three-Column Grid --- */}
       {/* This grid spans the full width and has three equal columns. */}
-      <div className="w-full grid grid-cols-3 items-center">
+      <div className="w-full grid grid-cols-4 items-center">
 
         {/* Column 1: Left (Menu Icon) */}
         {/* `justify-self-start` pins the menu to the far left of its column. */}

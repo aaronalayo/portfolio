@@ -27,14 +27,15 @@ const BurgerIcon: React.FC<BurgerIconProps> = ({ open, onClick, color = 'white' 
   );
 };
 
-// --- (sections array remains the same) ---
+// --- UPDATED SECTIONS ARRAY ---
+// Now we just store the component reference, not the rendered element.
 const sections = [
-  { label: 'Home', value: '/', icon: <HomeIcon size={36} /> },
-  { label: 'Editorial', value: '/videos', icon: <VideosIcon size={36} /> },
-  { label: 'Dev Work', value: '/developer', icon: <DeveloperIcon size={36} /> },
-  { label: 'Photography', value: '/photos', icon: <PhotographyIcon size={36} /> },
-  { label: 'About', value: '/about', icon: <AboutIcon size={36} /> },
-  { label: 'Contact', value: '/contact', icon: <ContactIcon size={36} /> },
+  { label: 'Home', value: '/', icon: HomeIcon },
+  { label: 'Editorial', value: '/videos', icon: VideosIcon },
+  { label: 'Dev Work', value: '/developer', icon: DeveloperIcon },
+  { label: 'Photography', value: '/photos', icon: PhotographyIcon },
+  { label: 'About', value: '/about', icon: AboutIcon },
+  { label: 'Contact', value: '/contact', icon: ContactIcon },
 ];
 
 const Menu: React.FC<{ burgerColor: string }> = ({ burgerColor }) => {
@@ -56,33 +57,42 @@ const Menu: React.FC<{ burgerColor: string }> = ({ burgerColor }) => {
         />
       </div>
    
-      {/* --- THIS IS THE FIX --- */}
-      {/* This overlay is now a simple, powerful flex container. */}
-      {/* It is guaranteed to center its content (the <nav>) both vertically and horizontally. */}
       <div
         className={`fixed inset-0 z-40 bg-white/90 backdrop-blur-lg 
-                   flex flex-col items-center justify-center 
+                   flex items-center justify-center 
                    transition-all duration-500 ease-in-out ${
           open ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       >
-        <nav className="flex flex-col items-center gap-8 text-center">
-          {sections.map((section, index) => (
-            <Link
-              key={section.value}
-              to={section.value}
-              onClick={() => setOpen(false)}
-              title={section.label}
-              className={`text-black transition-all duration-300 hover:scale-110 ${
-                open ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-              }`}
-              style={{
-                transitionDelay: open ? `${150 + index * 50}ms` : '0ms'
-              }}
-            >
-              {section.icon}
-            </Link>
-          ))}
+        {/* --- THIS IS THE FIX --- */}
+        {/* This <nav> now intelligently switches between a column and a row */}
+        <nav className={`
+          flex 
+          flex-col landscape:flex-row 
+          items-center 
+          gap-6 md:gap-8
+        `}>
+          {sections.map((section, index) => {
+            // Get the component type from our array
+            const IconComponent = section.icon;
+            return (
+              <Link
+                key={section.value}
+                to={section.value}
+                onClick={() => setOpen(false)}
+                title={section.label}
+                className={`text-black transition-all duration-300 hover:scale-110 ${
+                  open ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+                }`}
+                style={{
+                  transitionDelay: open ? `${150 + index * 50}ms` : '0ms'
+                }}
+              >
+                {/* Render the icon with responsive size classes */}
+                <IconComponent className="w-7 h-7 md:w-9 md:h-9" />
+              </Link>
+            )
+          })}
         </nav>
       </div>
     </>
