@@ -189,20 +189,5 @@ body {
   }
 }
 
-.video-cover {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100vw;
-  height: 100vh;
-  min-width: 100%;
-  min-height: 150%;
-  transform: translateX(-50%) translateY(-50%);
-}
 
-@media (orientation: portrait) {
-  .video-container-responsive {
-    width: 600vw;
-    height: 100%;
-  }
-}
+
