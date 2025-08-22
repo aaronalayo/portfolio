@@ -111,7 +111,7 @@ const PhotosSection = () => {
 
       {/* --- Your original component JSX starts here, completely unchanged --- */}
       <section className="min-h-screen bg-white px-4 py-20 flex flex-col z-10 w-full">
-        <h2 className="font-veep font-bold text-2xl mb-16 text-center uppercase tracking-tight text-black-900">
+        <h2 className="font-veep text-2xl mb-16 text-center uppercase tracking-tight text-black-900">
           PHOTOGRAPHY
         </h2>
 

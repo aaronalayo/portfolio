@@ -80,7 +80,7 @@ const ContactSection = () => {
       <link rel="canonical" href="https://redmalanga.com/contact" />
 
       <section className="w-full flex flex-col px-6 py-20 items-center justify-center">
-        <h2 className="text-2xl font-bold mb-6 text-center uppercase tracking-tight drop-shadow-sm">Contact</h2>
+        <h2 className="text-2xl mb-6 text-center uppercase tracking-tight drop-shadow-sm">Get in touch</h2>
 
         {showSuccess ? (
           <Card className="w-full max-w-xl bg-green-50 border-green-200 text-center">

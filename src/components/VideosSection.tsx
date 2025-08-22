@@ -95,7 +95,7 @@ const VideosSection = () => {
       <link rel="canonical" href="https://redmalanga.com/videos" />
 
       <section className="w-full min-h-screen bg-white flex flex-col z-10 px-4 py-20">
-        <h2 className="font-veep font-bold text-2xl mb-16 text-center uppercase tracking-tight text-black-900 drop-shadow-sm">
+        <h2 className="font-veep text-2xl mb-16 text-center uppercase tracking-tight text-black-900 drop-shadow-sm">
           EDITORIAL WORK
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-[1600px] mx-auto px-6">
