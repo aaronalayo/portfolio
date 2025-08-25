@@ -57,7 +57,7 @@ const AboutSection = () => {
             
             {/* --- THIS IS THE FIX --- */}
             {/* We apply `text-justify` to the container for the PortableText */}
-            <div className="prose prose-lg max-w-none text-wrap text-justify">
+            <div className="prose prose-lg max-w-none">
               <PortableText value={aboutData.bio} components={ptComponents} />
             </div>
 

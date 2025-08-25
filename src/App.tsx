@@ -2,12 +2,13 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import ReactGA from 'react-ga4';
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 
 // --- Your Component Imports ---
 import VideosSection from './components/VideosSection';
 import PhotosSection from './components/PhotosSection';
 import RandomWorkSection from './components/RandomWorkSection';
-import Header from './components/Header'; // The new self-contained Header
+import Header from './components/Header';
 import Footer from './components/Footer';
 import AboutSection from './components/AboutSection';
 import DeveloperWorkSection from './components/DeveloperWorkSection';
@@ -17,7 +18,6 @@ import ModernCookieBanner from './components/ModernCookieBanner';
 // --- Analytics Helper Section ---
 const TRACKING_ID = "G-D9S582M60D"; // Your actual Measurement ID
 
-// --- THIS IS THE CORRECT, COMPLETE FUNCTION ---
 const initializeAnalytics = () => {
   if (process.env.NODE_ENV === 'production') {
     ReactGA.initialize(TRACKING_ID);
@@ -26,7 +26,6 @@ const initializeAnalytics = () => {
   }
 };
 
-// --- THIS IS THE CORRECT, COMPLETE COMPONENT ---
 const RouteChangeTracker = () => {
   const location = useLocation();
   useEffect(() => {
@@ -39,7 +38,6 @@ const RouteChangeTracker = () => {
 };
 
 function App() {
-  // --- (The useEffect for analytics consent remains the same) ---
   useEffect(() => {
     const consent = localStorage.getItem('cookie_consent');
     if (consent === 'granted') {
@@ -47,7 +45,6 @@ function App() {
     }
   }, []);
   
-  // This helper component adds the necessary padding to all pages except the homepage.
   const MainContent = () => {
     const location = useLocation();
     const isHomePage = location.pathname === '/';
@@ -70,18 +67,17 @@ function App() {
   };
 
   return (
-    <Router>
-      <RouteChangeTracker />
-      <div className="flex flex-col min-h-screen">
-        
-        {/* The Header is now completely self-contained and needs no props. */}
-        <Header />
-        
-        <MainContent />
-        <Footer />
-      </div>
-      <ModernCookieBanner onAccept={initializeAnalytics} />
-    </Router>
+    <GoogleReCaptchaProvider reCaptchaKey={import.meta.env.VITE_GOOGLE_RECAPTCHA_V3_SITE_KEY || ''} scriptProps={{ async: true, defer: true, appendTo: 'head', nonce: undefined }}>
+      <Router>
+        <RouteChangeTracker />
+        <div className="flex flex-col min-h-screen">
+          <Header />
+          <MainContent />
+          <Footer />
+        </div>
+        <ModernCookieBanner onAccept={initializeAnalytics} />
+      </Router>
+    </GoogleReCaptchaProvider>
   );
 }
 
