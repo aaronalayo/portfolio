@@ -1,5 +1,5 @@
 // src/components/ContactSection.tsx
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import sanityClient from '../sanityClient';
 import ReactGA from 'react-ga4';
@@ -10,7 +10,7 @@ import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recapt
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 
 // --- This is the INNER component that does all the work ---
 const ContactForm = () => {
