@@ -67,7 +67,7 @@ function App() {
   };
 
   return (
-    <GoogleReCaptchaProvider reCaptchaKey={import.meta.env.VITE_GOOGLE_RECAPTCHA_V3_SITE_KEY || ''} scriptProps={{ async: true, defer: true, appendTo: 'head', nonce: undefined }}>
+    <GoogleReCaptchaProvider reCaptchaKey={import.meta.env.VITE_GOOGLE_RECAPTCHA_V3_SITE_KEY || ''} scriptProps={{ async: false, defer: false, appendTo: 'body', nonce: undefined }}>
       <Router>
         <RouteChangeTracker />
         <div className="flex flex-col min-h-screen">
