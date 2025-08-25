@@ -2,7 +2,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import ReactGA from 'react-ga4';
-import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 
 // --- Your Component Imports ---
 import VideosSection from './components/VideosSection';
@@ -67,7 +66,6 @@ function App() {
   };
 
   return (
-    <GoogleReCaptchaProvider reCaptchaKey={import.meta.env.VITE_GOOGLE_RECAPTCHA_V3_SITE_KEY || ''} scriptProps={{ async: false, defer: false, appendTo: 'body', nonce: undefined }}>
       <Router>
         <RouteChangeTracker />
         <div className="flex flex-col min-h-screen">
@@ -77,7 +75,6 @@ function App() {
         </div>
         <ModernCookieBanner onAccept={initializeAnalytics} />
       </Router>
-    </GoogleReCaptchaProvider>
   );
 }
 
