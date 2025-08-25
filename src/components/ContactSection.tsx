@@ -1,5 +1,5 @@
 // src/components/ContactSection.tsx
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import sanityClient from '../sanityClient';
 import ReactGA from 'react-ga4';
@@ -13,12 +13,24 @@ import { Card, CardContent } from '@/components/ui/card';
 
 // --- This is the INNER component that contains the form logic and UI ---
 const ContactForm = () => {
-  // We use uncontrolled inputs but can add controlled state if needed for other features
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { executeRecaptcha } = useGoogleReCaptcha();
+
+  // This useEffect now handles the redirect AFTER submission is successful.
+  useEffect(() => {
+    if (submitted) {
+      // Wait 5 seconds, then redirect.
+      const timer = setTimeout(() => {
+        navigate('/');
+      }, 5000);
+      
+      // Cleanup function to clear the timer if the component unmounts
+      return () => clearTimeout(timer);
+    }
+  }, [submitted, navigate]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,7 +42,6 @@ const ContactForm = () => {
     setLoading(true);
     setError(null);
 
-    // Get fresh form data directly from the form event. This is robust.
     const formData = new FormData(e.currentTarget);
     const submissionObject = {
       name: String(formData.get('name')),
@@ -55,12 +66,12 @@ const ContactForm = () => {
       
       await sanityClient.create({ _type: 'contact', ...submissionObject, submittedAt: new Date().toISOString() });
       
+      // If everything succeeds, set submitted to true to show the success message.
       setSubmitted(true);
       if (process.env.NODE_ENV === 'production') {
         ReactGA.event({ category: 'Contact Form', action: 'Submission Success' });
       }
-      // The redirect is removed because the success message now handles it.
-
+      
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'There was a problem sending your message. Please try again.');
@@ -69,45 +80,44 @@ const ContactForm = () => {
     }
   }, [executeRecaptcha, navigate]);
 
-  // If the form was submitted successfully, show the success message
-  if (submitted) {
-    return (
-      <Card className="w-full max-w-xl bg-green-50 border-green-200 text-center">
-        <CardContent className="space-y-4 p-6">
-          <p className="text-green-700 text-lg font-semibold">Thank you! Your message has been sent. 😊</p>
-          <Button onClick={() => navigate('/')}>
-            Back to Homepage
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // Otherwise, show the form
   return (
-    <form className="w-full max-w-xl bg-white rounded-2xl p-8 shadow-lg space-y-6" onSubmit={handleSubmit}>
-      <div className="space-y-1">
-        <Input id="name" name="name" placeholder='Name' required />
-      </div>
-      <div className="space-y-1">
-        <Input id="email" name="email" type="email" placeholder='Email' required />
-      </div>
-      <div className="space-y-1">
-        <Textarea id="message" name="message" placeholder='Message' rows={6} required />
-      </div>
-      <div className="flex justify-center">
-        <Button type="submit" disabled={loading}>
-          {loading ? 'Sending...' : 'Send Message'}
-        </Button>
-      </div>
-      {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-    </form>
+    <>
+      {submitted ? (
+        // --- Your complete success message with redirect text is RESTORED ---
+        <Card className="w-full max-w-xl bg-green-50 border-green-200 text-center">
+          <CardContent className="space-y-4 p-6">
+            <p className="text-green-700 text-lg font-semibold">Thank you! Your message has been sent. 😊</p>
+            <p className="text-sm text-gray-600">You will be redirected to the homepage shortly...</p>
+            <Button onClick={() => navigate('/')}>Go to Homepage</Button>
+          </CardContent>
+        </Card>
+      ) : (
+        // --- Your complete form is RESTORED ---
+        <form className="w-full max-w-xl bg-white rounded-2xl p-8 shadow-lg space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-1">
+            <Input id="name" name="name" placeholder='Name' required />
+          </div>
+          <div className="space-y-1">
+            <Input id="email" name="email" type="email" placeholder='Email' required />
+          </div>
+          <div className="space-y-1">
+            <Textarea id="message" name="message" placeholder='Message' rows={6} required />
+          </div>
+          <div className="flex justify-center">
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Sending...' : 'Send Message'}
+            </Button>
+          </div>
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+        </form>
+      )}
+    </>
   );
 };
 
 
 // --- This is the OUTER component that we EXPORT ---
-// Its only job is to provide the reCAPTCHA context and the main section layout.
+// It provides the reCAPTCHA context and the main section layout.
 const ContactSection = () => (
   <>
     <title>Contact Me - Red Malanga</title>
