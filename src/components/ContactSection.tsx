@@ -1,5 +1,5 @@
 // src/components/ContactSection.tsx
-import React, { useState, useCallback, useEffect } from 'react'; // <-- Add useEffect
+import React, { useState, useCallback } from 'react'; // <-- Add useEffect
 import { useNavigate } from 'react-router-dom';
 import sanityClient from '../sanityClient';
 import ReactGA from 'react-ga4';
@@ -9,7 +9,7 @@ import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
