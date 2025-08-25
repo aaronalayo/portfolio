@@ -1,74 +1,76 @@
 // src/components/ContactSection.tsx
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import sanityClient from '../sanityClient';
 import ReactGA from 'react-ga4';
+
+// --- These are the correct, modern imports ---
+import { useForm, ValidationError } from '@formspree/react';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
-// --- (UI component imports) ---
+// --- (Your UI component imports) ---
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
-// A simple spinner component for the loading state
-const Spinner = () => (
-  <svg className="animate-spin h-8 w-8 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-  </svg>
-);
-
-
 const ContactSection = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { executeRecaptcha } = useGoogleReCaptcha();
+  
+  // This is the official, correct way to integrate reCAPTCHA v3 with the useForm hook.
+  const [state, handleSubmit] = useForm("mgvzqzbl", { // <-- PASTE YOUR FORM ID
+    data: { 
+      "g-recaptcha-response": executeRecaptcha 
+    }
+  });
+
   const navigate = useNavigate();
 
-  const { executeRecaptcha } = useGoogleReCaptcha();
-  const [recaptchaReady, setRecaptchaReady] = useState(false);
-
   useEffect(() => {
-    // A small delay to prevent a "flash" of the loader on fast connections
-    const timer = setTimeout(() => {
-      if (executeRecaptcha) {
-        setRecaptchaReady(true);
-      }
-    }, 200); // 200ms delay
-    
-    return () => clearTimeout(timer);
-  }, [executeRecaptcha]);
-
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!recaptchaReady || !executeRecaptcha) { return; }
-
-    setLoading(true);
-    setError(null);
-    try {
-      const token = await executeRecaptcha('contactForm');
-      const submissionData = { ...formData, 'g-recaptcha-response': token };
-      const formspreeResponse = await fetch('https://formspree.io/f/mgvzqzbl', { // <-- PASTE YOUR FORM ID
-        method: 'POST',
-        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-        body: JSON.stringify(submissionData),
-      });
-      if (!formspreeResponse.ok) { throw new Error('Formspree submission failed.'); }
-      await sanityClient.create({ _type: 'contact', ...formData, submittedAt: new Date().toISOString() });
-      setSubmitted(true);
+    // We simply watch for the success state from the hook.
+    if (state.succeeded) {
       if (process.env.NODE_ENV === 'production') {
         ReactGA.event({ category: 'Contact Form', action: 'Submission Success' });
       }
       setTimeout(() => navigate('/'), 5000);
-    } catch (err) {
-      console.error(err);
-      setError('There was a problem sending your message. Please try again.');
-    } finally {
-      setLoading(false);
     }
-  }, [executeRecaptcha, recaptchaReady, formData, navigate]);
+  }, [state.succeeded, navigate]);
+
+  // This function wraps the Formspree and Sanity submissions together.
+  const handleCombinedSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // First, always save the data to Sanity.
+    const formData = new FormData(e.currentTarget);
+    sanityClient.create({
+        _type: 'contact',
+        name: String(formData.get('name')),
+        email: String(formData.get('email')),
+        message: String(formData.get('message')),
+        submittedAt: new Date().toISOString(),
+    }).catch((err) => {
+        console.error("Sanity submission failed:", err);
+    });
+
+    // Then, call the Formspree hook's handleSubmit function.
+    // It will automatically get the token and submit the form.
+    handleSubmit(e);
+  };
+
+  if (state.succeeded) {
+    return (
+      <section className="w-full flex flex-col px-6 py-20 items-center justify-center">
+        <h2 className="text-2xl font-bold mb-6 text-center uppercase tracking-tight drop-shadow-sm">Contact</h2>
+        <Card className="w-full max-w-xl bg-green-50 border-green-200 text-center">
+          <CardContent className="space-y-4 p-6">
+            <p className="text-green-700 text-lg font-semibold">Thank you! Your message has been sent. 😊</p>
+            <p className="text-sm text-gray-600">You will be redirected to the homepage shortly...</p>
+            <Button onClick={() => navigate('/')}>Go to Homepage</Button>
+          </CardContent>
+        </Card>
+      </section>
+    );
+  }
 
   return (
     <>
@@ -78,36 +80,19 @@ const ContactSection = () => {
 
       <section className="w-full flex flex-col px-6 py-20 items-center justify-center">
         <h2 className="text-2xl font-bold mb-6 text-center uppercase tracking-tight drop-shadow-sm">Contact</h2>
-
-        {submitted ? (
-          <Card className="w-full max-w-xl bg-green-50 border-green-200 text-center">
-             <CardContent className="space-y-4 p-6"><p className="text-green-700 text-lg font-semibold">Thank you! Your message has been sent. 😊</p><p className="text-sm text-gray-600">You will be redirected to the homepage shortly...</p><Button onClick={() => navigate('/')}>Go to Homepage</Button></CardContent>
-          </Card>
-        ) : (
-          // --- THIS IS THE FIX ---
-          // This container now controls what is shown: the loader or the form.
-          <div className="w-full max-w-xl bg-white rounded-2xl p-8 shadow-lg">
-            {!recaptchaReady ? (
-              // If reCAPTCHA is not ready, show a clean spinner
-              <div className="flex justify-center items-center h-64">
-                <Spinner />
-              </div>
-            ) : (
-              // If reCAPTCHA is ready, show the form
-              <form className="space-y-6" onSubmit={handleSubmit}>
-                <div className="space-y-1"><Input id="name" name="name" placeholder='Name' value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required /></div>
-                <div className="space-y-1"><Input id="email" name="email" type="email" placeholder='Email' value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required /></div>
-                <div className="space-y-1"><Textarea id="message" name="message" placeholder='Message' rows={6} value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} required /></div>
-                <div className="flex justify-center">
-                  <Button type="submit" disabled={loading}>
-                    {loading ? 'Sending...' : 'Send Message'}
-                  </Button>
-                </div>
-                {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-              </form>
-            )}
+        <form className="w-full max-w-xl bg-white rounded-2xl p-8 shadow-lg space-y-6" onSubmit={handleCombinedSubmit}>
+          <div className="space-y-1"><Input id="name" name="name" placeholder='Name' required /></div>
+          <div className="space-y-1"><Input id="email" name="email" type="email" placeholder='Email' required /><ValidationError prefix="Email" field="email" errors={state.errors} className="text-red-500 text-sm mt-1" /></div>
+          <div className="space-y-1"><Textarea id="message" name="message" placeholder='Message' rows={6} required /><ValidationError prefix="Message" field="message" errors={state.errors} className="text-red-500 text-sm mt-1" /></div>
+          
+          <div className="flex justify-center">
+            {/* The disabled state comes directly from the Formspree hook */}
+            <Button type="submit" disabled={state.submitting}>
+              {state.submitting ? 'Sending...' : 'Send Message'}
+            </Button>
           </div>
-        )}
+          <ValidationError errors={state.errors} className="text-red-500 text-sm text-center" />
+        </form>
       </section>
     </>
   );
