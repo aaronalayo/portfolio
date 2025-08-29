@@ -55,7 +55,9 @@ function App() {
           <Routes>
             <Route path="/" element={<RandomWorkSection />} />
             <Route path="/videos" element={<VideosSection />} />
+            <Route path="/videos/:slug" element={<VideosSection />} />
             <Route path="/photos" element={<PhotosSection />} />
+            <Route path="/photos/:slug" element={<PhotosSection />} />
             <Route path="/developer" element={<DeveloperWorkSection />} />
             <Route path="/about" element={<AboutSection />} />
             <Route path="/contact" element={<ContactSection />} />
