@@ -5,38 +5,67 @@ interface ModernCookieBannerProps {
   onAccept: () => void;
 }
 
+// Define the structure of our compliant consent record
+interface ConsentRecord {
+  consentId: string;
+  timestamp: string;
+  consentTextVersion: string;
+  choices: {
+    analytics: boolean;
+  };
+}
+
+// Store the text in constants so we can version it
+const CONSENT_TEXT_VERSION = "1.0";
+const CONSENT_MAIN_TEXT = "We use cookies to analyze website traffic and enhance your browsing experience.";
+const CONSENT_PREFERENCES_TEXT = "These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously (e.g., via Google Analytics).";
+
 const ModernCookieBanner: React.FC<ModernCookieBannerProps> = ({ onAccept }) => {
   const [showBanner, setShowBanner] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
 
-  // On component mount, check if consent has been given
+  // On component mount, check if a valid consent record exists
   useEffect(() => {
-    const consent = localStorage.getItem('cookie_consent');
-    if (!consent) {
-      // Use a timeout to delay the banner's appearance slightly for a better UX
+    const consentString = localStorage.getItem('cookie_consent_record');
+    if (!consentString) {
       const timer = setTimeout(() => setShowBanner(true), 1000);
       return () => clearTimeout(timer);
     }
   }, []);
 
-  const handleAction = (consentType: 'granted' | 'denied') => {
+  // This is the new, compliant function to handle the user's action
+  const handleAction = (analyticsChoice: boolean) => {
     setIsClosing(true); // Trigger the exit animation
 
-    // Wait for the animation to complete before hiding the component and setting storage
+    // Create the detailed consent record
+    const newConsentRecord: ConsentRecord = {
+      consentId: `consent-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      timestamp: new Date().toISOString(),
+      consentTextVersion: CONSENT_TEXT_VERSION,
+      choices: {
+        analytics: analyticsChoice,
+      },
+    };
+
+    // Save the entire object as a JSON string
+    localStorage.setItem('cookie_consent_record', JSON.stringify(newConsentRecord));
+
+    // Wait for the animation to complete
     setTimeout(() => {
-      localStorage.setItem('cookie_consent', consentType);
       setShowBanner(false);
-      if (consentType === 'granted') {
-        onAccept(); // Initialize analytics if accepted
+      // If the user accepted analytics cookies, trigger the onAccept function
+      if (analyticsChoice) {
+        onAccept();
       }
-    }, 500); // This duration should match the CSS transition duration
+    }, 500); // This duration must match your CSS transition duration
   };
 
   if (!showBanner) {
     return null;
   }
 
+  // --- YOUR ORIGINAL, CORRECT JSX AND STYLING ARE RESTORED HERE ---
   return (
     <div
       className={`fixed bottom-4 left-4 z-[1000] w-full max-w-md transition-all duration-500 ease-in-out ${
@@ -54,7 +83,6 @@ const ModernCookieBanner: React.FC<ModernCookieBannerProps> = ({ onAccept }) => 
             <div className="bg-gray-800 p-3 rounded-md">
               <label htmlFor="analytics-cookies" className="flex items-center justify-between cursor-pointer">
                 <span className="font-semibold text-white">Analytics Cookies</span>
-                {/* For this simple case, this checkbox is always on */}
                 <input
                   type="checkbox"
                   id="analytics-cookies"
@@ -63,9 +91,7 @@ const ModernCookieBanner: React.FC<ModernCookieBannerProps> = ({ onAccept }) => 
                   disabled
                 />
               </label>
-              <p className="text-xs text-gray-400 mt-1">
-                These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously (e.g., via Google Analytics).
-              </p>
+              <p className="text-xs text-gray-400 mt-1">{CONSENT_PREFERENCES_TEXT}</p>
             </div>
             <div className="flex justify-end gap-3 mt-4">
               <button
@@ -75,7 +101,8 @@ const ModernCookieBanner: React.FC<ModernCookieBannerProps> = ({ onAccept }) => 
                 Back
               </button>
               <button
-                onClick={() => handleAction('granted')}
+                // This button now correctly calls handleAction with `true`
+                onClick={() => handleAction(true)}
                 className="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg text-sm"
               >
                 Accept & Save
@@ -86,18 +113,18 @@ const ModernCookieBanner: React.FC<ModernCookieBannerProps> = ({ onAccept }) => 
           // --- MAIN VIEW ---
           <div>
             <h3 className="text-lg font-bold mb-2">This website uses cookies</h3>
-            <p className="text-sm text-gray-300 mb-4">
-              We use cookies to analyze website traffic and enhance your browsing experience.
-            </p>
+            <p className="text-sm text-gray-300 mb-4">{CONSENT_MAIN_TEXT}</p>
             <div className="flex flex-col sm:flex-row gap-3">
               <button
-                onClick={() => handleAction('granted')}
+                // The "Accept" button now passes `true` for the analytics choice
+                onClick={() => handleAction(true)}
                 className="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg text-sm w-full sm:w-auto"
               >
                 Accept
               </button>
               <button
-                onClick={() => handleAction('denied')}
+                // The "Decline" button now passes `false` for the analytics choice
+                onClick={() => handleAction(false)}
                 className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-sm w-full sm:w-auto"
               >
                 Decline
