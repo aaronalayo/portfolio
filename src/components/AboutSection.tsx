@@ -1,22 +1,28 @@
 // src/components/AboutSection.tsx
 import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import sanityClient from '../sanityClient';
 import imageUrlBuilder from '@sanity/image-url';
 import type { PortableTextBlock } from '@portabletext/types';
 import { PortableText } from '@portabletext/react';
 
 const builder = imageUrlBuilder(sanityClient);
-const urlFor = (source: any) => builder.image(source);
+type BuilderImageParam = Parameters<typeof builder.image>[0];
+const urlFor = (source: BuilderImageParam) => builder.image(source as BuilderImageParam);
 
 interface AboutData {
   bio: PortableTextBlock[];
-  image: any;
+  image: unknown;
 }
 
 const ptComponents = {
   marks: {
-    link: ({ value, children }: any) => {
-      return ( <a href={value?.href} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{children}</a> );
+    link: ({ value, children }: { value?: { href?: string }; children?: ReactNode }) => {
+      return (
+        <a href={value?.href} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+          {children}
+        </a>
+      );
     },
   },
 };
@@ -45,11 +51,17 @@ const AboutSection = () => {
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 max-w-5xl w-full">
           
           <div className="w-full md:w-1/3 flex justify-center flex-shrink-0">
-            <img
-              src={urlFor(aboutData.image).width(400).height(400).url()}
-              alt="A portrait photo of Aaron Alayo"
-              className="object-cover w-[250px] h-[250px] md:w-[300px] md:h-[300px] rounded shadow-lg"
-            />
+            {aboutData.image ? (
+              <img
+                src={urlFor(aboutData.image as BuilderImageParam).width(400).height(400).url()}
+                alt="A portrait photo of Aaron Alayo"
+                className="object-cover w-[250px] h-[250px] md:w-[300px] md:h-[300px] rounded shadow-lg"
+              />
+            ) : (
+              <div className="w-[250px] h-[250px] md:w-[300px] md:h-[300px] rounded bg-gray-100 flex items-center justify-center">
+                <span className="text-gray-400">No image</span>
+              </div>
+            )}
           </div>
 
           <div className="w-[250px] md:w-2/3 text-gray-800 text-center md:text-left">

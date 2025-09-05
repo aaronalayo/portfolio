@@ -49,7 +49,7 @@ const ContactForm = () => {
       message: String(formData.get('message')),
     };
 
-    try {
+  try {
       const token = await executeRecaptcha('contactForm');
       const submissionData = { ...submissionObject, 'g-recaptcha-response': token };
       
@@ -72,13 +72,14 @@ const ContactForm = () => {
         ReactGA.event({ category: 'Contact Form', action: 'Submission Success' });
       }
       
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      setError(err.message || 'There was a problem sending your message. Please try again.');
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message || 'There was a problem sending your message. Please try again.');
     } finally {
       setLoading(false);
     }
-  }, [executeRecaptcha, navigate]);
+  }, [executeRecaptcha]);
 
   return (
     <>

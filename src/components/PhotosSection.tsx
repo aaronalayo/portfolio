@@ -3,9 +3,13 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'; // <-- 1. IMPORT HOOKS
 import imageUrlBuilder from '@sanity/image-url';
 import sanityClient from '../sanityClient';
+// Sanity's helper types may not be available at runtime in this project setup,
+// so use a narrow local alias to avoid `any` while remaining flexible.
+type SanityImageSource = unknown;
 
 const builder = imageUrlBuilder(sanityClient);
-const urlFor = (source: any) => builder.image(source);
+type BuilderImageParam = Parameters<typeof builder.image>[0];
+const urlFor = (source: SanityImageSource) => builder.image(source as BuilderImageParam);
 
 // --- 2. ADD `slug` TO THE INTERFACE ---
 interface Photo {
@@ -46,45 +50,24 @@ const PhotosSection = () => {
           image { asset -> { url } }
         }`
       )
-      .then((data: Photo[]) => {
-        const grouped = data.reduce((acc, photo) => {
+      .then((data: unknown) => {
+        const typed = data as Photo[];
+        const grouped = typed.reduce((acc: { [category: string]: Photo[] }, photo: Photo) => {
           const key = photo.category || 'Uncategorized';
           if (!acc[key]) acc[key] = [];
           acc[key].push(photo);
           return acc;
         }, {} as { [category: string]: Photo[] });
-        setPhotos(data);
+        setPhotos(typed);
         setGroupedPhotos(grouped);
-      });
+      })
+      .catch((err) => console.error('Failed to fetch photos:', err));
   }, []);
   
-  // --- 5. NEW EFFECT TO SYNCHRONIZE URL WITH STATE ---
-  useEffect(() => {
-    if (slug && Object.keys(groupedPhotos).length > 0) {
-      // Find the photo that matches the slug in the URL
-      let foundCategory: string | undefined;
-      let foundIndex: number = -1;
-      for (const category in groupedPhotos) {
-        const photoIndex = groupedPhotos[category].findIndex(p => p.slug.current === slug);
-        if (photoIndex !== -1) {
-          foundCategory = category;
-          foundIndex = photoIndex;
-          break;
-        }
-      }
-      // If a photo is found, AND the modal isn't already open to it, update the state.
-      if (foundCategory && (selectedCategory !== foundCategory || selectedIndex !== foundIndex)) {
-        openModal(foundCategory, foundIndex, true); // `true` prevents a URL loop
-      }
-    } else if (!slug && selectedCategory) {
-      // If the URL is cleared but the modal is open (e.g., browser back button), close it.
-      closeModal(true); // `true` prevents a URL loop
-    }
-  }, [slug, groupedPhotos]); // This runs when the URL or data changes.
+  // URL-sync effect moved below after modal functions to ensure callbacks exist
 
 
-  // --- 6. UPDATE YOUR ORIGINAL FUNCTIONS TO HANDLE URLS ---
-  const openModal = (category: string, index: number, fromUrl = false) => {
+  const openModal = useCallback((category: string, index: number, fromUrl = false) => {
     setSelectedCategory(category);
     setSelectedIndex(index);
     setTimeout(() => setAnimateImage(true), 300);
@@ -96,9 +79,9 @@ const PhotosSection = () => {
         navigate(`/photos/${photo.slug.current}`);
       }
     }
-  };
+  }, [groupedPhotos, navigate]);
 
-  const closeModal = (fromUrl = false) => {
+  const closeModal = useCallback((fromUrl = false) => {
     setAnimateImage(false);
     setTimeout(() => {
       setSelectedCategory(null);
@@ -109,7 +92,7 @@ const PhotosSection = () => {
     if (!fromUrl) {
       navigate('/photos');
     }
-  };
+  }, [navigate]);
 
   const handleNext = useCallback(() => {
     if (!selectedCategory) return;
@@ -147,6 +130,30 @@ const PhotosSection = () => {
 
   // Find the currently selected photo object for SEO tags and image display
   const selectedPhoto = selectedCategory ? groupedPhotos[selectedCategory]?.[selectedIndex] : null;
+
+  // --- URL-sync effect: keep modal state and URL in sync ---
+  useEffect(() => {
+    if (slug && Object.keys(groupedPhotos).length > 0) {
+      // Find the photo that matches the slug in the URL
+      let foundCategory: string | undefined;
+      let foundIndex: number = -1;
+      for (const category in groupedPhotos) {
+        const photoIndex = groupedPhotos[category].findIndex(p => p.slug.current === slug);
+        if (photoIndex !== -1) {
+          foundCategory = category;
+          foundIndex = photoIndex;
+          break;
+        }
+      }
+      // If a photo is found, AND the modal isn't already open to it, update the state.
+      if (foundCategory && (selectedCategory !== foundCategory || selectedIndex !== foundIndex)) {
+        openModal(foundCategory, foundIndex, true); // `true` prevents a URL loop
+      }
+    } else if (!slug && selectedCategory) {
+      // If the URL is cleared but the modal is open (e.g., browser back button), close it.
+      closeModal(true); // `true` prevents a URL loop
+    }
+  }, [slug, groupedPhotos, openModal, closeModal, selectedCategory, selectedIndex]); // runs when URL or data changes
 
   return (
     <>

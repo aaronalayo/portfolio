@@ -6,8 +6,8 @@ import { PortableText } from '@portabletext/react';
 // --- (Your PortableText components object remains the same) ---
 const components = {
   marks: {
-    link: ({ value, children }: any) => {
-      const { href, blank } = value;
+    link: ({ value, children }: { value?: { href?: string; blank?: boolean }; children?: React.ReactNode }) => {
+      const { href, blank } = value || {};
       return (
         <a
           href={href}

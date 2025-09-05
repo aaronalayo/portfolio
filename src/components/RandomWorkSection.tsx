@@ -19,7 +19,8 @@ const RandomWorkSection = () => {
   useEffect(() => {
     const query = `*[_type == "video" && excludeFromHomepage != true]{ _id, title, vimeoId }`;
     sanityClient.fetch(query)
-      .then((eligibleVideos: Video[]) => {
+      .then((res: unknown) => {
+        const eligibleVideos = res as Video[];
         if (eligibleVideos.length > 0) {
           const random = eligibleVideos[Math.floor(Math.random() * eligibleVideos.length)];
           setRandomVideo(random);
@@ -47,18 +48,15 @@ const RandomWorkSection = () => {
         
         {randomVideo && (
           <iframe
-            {...{ 
-              ref: iframeRef,
-              src: `https://player.vimeo.com/video/${randomVideo.vimeoId}?autoplay=1&muted=1&controls=0&quality=720p&autopause=0&loop=1&transparent=0&dnt=1`,
-              title: randomVideo.title,
-              allow: "autoplay; fullscreen",
-              allowFullScreen: true,
-              playsInline: true, 
-              onLoad: () => setLoading(false),
-              className: "absolute w-full h-auto aspect-video portrait:h-full portrait:w-auto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
-              style: { border: 'none' }
-            } as any}
-          />
+              ref={iframeRef}
+              src={`https://player.vimeo.com/video/${randomVideo.vimeoId}?autoplay=1&muted=1&controls=0&quality=720p&autopause=0&loop=1&transparent=0&dnt=1`}
+              title={randomVideo.title}
+              allow="autoplay; fullscreen"
+              allowFullScreen
+              onLoad={() => setLoading(false)}
+              className="absolute w-full h-auto aspect-video portrait:h-full portrait:w-auto top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+              style={{ border: 'none' }}
+            />
         )}
         
         {/* --- THE TITLE OVERLAY HAS BEEN REMOVED FROM THIS COMPONENT --- */}

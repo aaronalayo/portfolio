@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies (root)
+        run: npm ci
+
+      - name: Lint (if available)
+        run: npm run lint --if-present
+
+      - name: Run tests (if available)
+        run: npm test --if-present
+
+      - name: Build app (if available)
+        run: npm run build --if-present
+
+      - name: Build Sanity (cms) if present
+        run: |
+          if [ -d "cms" ]; then
+            echo "Building cms..."
+            npm --prefix cms ci
+            npm --prefix cms run build --if-present
+          else
+            echo "No cms folder, skipping cms build"
+          fi
+
+      - name: Upload app build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: |
+            dist
+            build
+
+      - name: Upload cms build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cms-build
+          path: cms/dist
