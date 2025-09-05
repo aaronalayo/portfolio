@@ -41,6 +41,17 @@ jobs:
             echo "No cms folder, skipping cms build"
           fi
 
+      - name: Sanitize artifact filenames
+        # Remove files with characters that cause artifact upload failures (e.g. Windows ADS suffixes like :Zone.Identifier)
+        run: |
+          for d in dist build cms/dist; do
+            if [ -d "$d" ]; then
+              echo "Sanitizing $d"
+              # remove files containing a colon in their name (these cause upload/download issues on NTFS)
+              find "$d" -type f -name '*:*' -print -exec rm -f {} \;
+            fi
+          done
+
       - name: Upload app build artifact
         uses: actions/upload-artifact@v4
         with:
