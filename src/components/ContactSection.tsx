@@ -1,7 +1,6 @@
 // src/components/ContactSection.tsx
 import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import sanityClient from '../sanityClient';
 import ReactGA from 'react-ga4';
 import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
@@ -52,7 +51,7 @@ const ContactForm = () => {
   try {
       const token = await executeRecaptcha('contactForm');
       const submissionData = { ...submissionObject, 'g-recaptcha-response': token };
-      
+
       const formspreeResponse = await fetch('https://formspree.io/f/mgvzqzbl', { // <-- PASTE YOUR FORM ID
         method: 'POST',
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
@@ -63,8 +62,21 @@ const ContactForm = () => {
         const errorData = await formspreeResponse.json();
         throw new Error(errorData.error || 'Formspree submission failed.');
       }
-      
-      await sanityClient.create({ _type: 'contact', ...submissionObject, submittedAt: new Date().toISOString() });
+      // Save a secure copy in Sanity via Cloudflare Pages Function
+      const cfResponse = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: submissionObject.name,
+          email: submissionObject.email,
+          message: submissionObject.message,
+          recaptchaToken: token,
+        }),
+      })
+      if (!cfResponse.ok) {
+        const errText = await cfResponse.text()
+        throw new Error(`Contact save failed: ${errText}`)
+      }
       
       // If everything succeeds, set submitted to true to show the success message.
       setSubmitted(true);
