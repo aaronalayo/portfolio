@@ -80,7 +80,7 @@ const Header = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto">
           <Link to="/" aria-label="Go to homepage" className="transition-opacity hover:opacity-80">
             <h1 className={`font-veep text-2xl md:text-3xl uppercase tracking-wider whitespace-nowrap drop-shadow-xl ${isHomePage ? 'text-white' : 'text-black'}`}>
-              Red Malanga
+              Aaron Alayo
             </h1>
           </Link>
         </div>
