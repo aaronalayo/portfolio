@@ -6,7 +6,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-  veep: ['"Bodoni Moda"', 'didot', 'serif'],
+        // Previous option:
+        // veep: ['"Bodoni Moda"', 'didot', 'serif'],
+        veep: ['"Bodoni Moda"', 'Didot', 'serif'],
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out forwards',

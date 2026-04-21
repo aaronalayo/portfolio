@@ -7,7 +7,7 @@ import {
   DeveloperIcon,
   PhotographyIcon,
   AboutIcon,
-  ContactIcon
+  ContactIcon,
 } from './MenuIcons';
 
 
@@ -39,11 +39,14 @@ const BurgerIcon: React.FC<BurgerIconProps> = ({ isOpen, onClick, color = 'white
 const sections = [
   { label: 'Home', value: '/', icon: HomeIcon },
   { label: 'Editorial', value: '/videos', icon: VideosIcon },
-  { label: 'Dev Work', value: '/developer', icon: DeveloperIcon },
   { label: 'Photography', value: '/photos', icon: PhotographyIcon },
+  { label: 'Dev Work', value: '/developer', icon: DeveloperIcon },
   { label: 'About', value: '/about', icon: AboutIcon },
   { label: 'Contact', value: '/contact', icon: ContactIcon },
 ];
+
+// Set to true anytime you want to use the old icon menu.
+const USE_ICON_MENU = false;
 
 
 // --- Main Header Component ---
@@ -103,14 +106,21 @@ const Header = () => {
           ${isMenuOpen ? 'opacity-100' : 'opacity-0'}
         `}>
           {sections.map((section, index) => {
+            const isActive = location.pathname === section.value;
             const IconComponent = section.icon;
             return (
               <Link
                 key={section.value} to={section.value} onClick={() => setIsMenuOpen(false)} title={section.label}
-                className={`text-black transition-all duration-300 hover:scale-110 ${ isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0' }`}
+                className={`uppercase tracking-wide text-sm md:text-base transition-all duration-300 ${
+                  isActive ? 'text-black font-semibold' : 'text-black/75 hover:text-black'
+                } ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0'}`}
                 style={{ transitionDelay: isMenuOpen ? `${150 + index * 50}ms` : '0ms' }}
               >
-                <IconComponent className="w-7 h-7 md:w-9 md:h-9" />
+                {USE_ICON_MENU ? (
+                  <IconComponent className="w-7 h-7 md:w-9 md:h-9" />
+                ) : (
+                  section.label
+                )}
               </Link>
             )
           })}
