@@ -155,7 +155,7 @@ const VideosSection = () => {
             >
               <img src={`https://vumbnail.com/${video.vimeoId}.jpg`} alt={video.title} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 flex items-center justify-center transition">
-                <h3 className="text-white text-2xl font-semibold px-4 text-center">{video.title}</h3>
+                <h3 className="text-white text-lg md:text-xl font-semibold px-4 text-center">{video.title}</h3>
               </div>
             </div>
           ))}
