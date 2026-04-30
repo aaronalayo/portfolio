@@ -13,6 +13,7 @@ interface Video {
   _id: string;
   title: string;
   vimeoId: string;
+  category: string;
   slug: {
     current: string;
   };
@@ -20,12 +21,15 @@ interface Video {
 }
 
 const PAGE_SIZE = 6;
+const ALL_CATEGORY = 'All';
+const normalizeCategory = (value: string) => value.trim().toLowerCase();
 
 const VideosSection = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [start, setStart] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState(ALL_CATEGORY);
 
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
@@ -37,7 +41,7 @@ const VideosSection = () => {
     try {
       // We now only fetch videos where the slug's "current" property is defined.
       const query = `*[_type == "video" && defined(slug.current)] | order(_createdAt desc) [${start}...${start + PAGE_SIZE}] {
-        _id, title, vimeoId, slug, thumbnail
+        _id, title, vimeoId, category, slug, thumbnail
       }`;
       const data: Video[] = await sanityClient.fetch(query);
       
@@ -122,6 +126,20 @@ const VideosSection = () => {
   }, [slug, videos, handleVideoClick]);
 
   const selectedVideo = slug && videos.length > 0 ? videos.find(v => v.slug.current === slug) : null;
+  const categoryOptions = videos.reduce<{label: string; normalized: string}[]>((acc, video) => {
+    const rawCategory = (video.category ?? '').trim();
+    if (!rawCategory) return acc;
+    const normalized = normalizeCategory(rawCategory);
+    if (!acc.some((category) => category.normalized === normalized)) {
+      acc.push({ label: rawCategory, normalized });
+    }
+    return acc;
+  }, []);
+
+  const filteredVideos = videos.filter((video) => {
+    if (selectedCategory === ALL_CATEGORY) return true;
+    return normalizeCategory(video.category ?? '') === normalizeCategory(selectedCategory);
+  });
 
   return (
     <>
@@ -143,8 +161,35 @@ const VideosSection = () => {
         <h2 className="font-veep text-2xl mb-16 text-center uppercase tracking-tight text-black-900 drop-shadow-sm">
           EDITORIAL WORK
         </h2>
+        <div className="flex flex-wrap justify-center gap-3 mb-10">
+          <button
+            type="button"
+            onClick={() => setSelectedCategory(ALL_CATEGORY)}
+            className={`px-4 py-2 rounded-full border text-sm transition-colors ${
+              selectedCategory === ALL_CATEGORY
+                ? 'bg-black text-white border-black'
+                : 'bg-white text-black border-black/40 hover:border-black'
+            }`}
+          >
+            {ALL_CATEGORY}
+          </button>
+          {categoryOptions.map((category) => (
+            <button
+              key={category.normalized}
+              type="button"
+              onClick={() => setSelectedCategory(category.label)}
+              className={`px-4 py-2 rounded-full border text-sm transition-colors ${
+                normalizeCategory(selectedCategory) === category.normalized
+                  ? 'bg-black text-white border-black'
+                  : 'bg-white text-black border-black/40 hover:border-black'
+              }`}
+            >
+              {category.label}
+            </button>
+          ))}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-[1600px] mx-auto px-6">
-          {videos.map((video) => (
+          {filteredVideos.map((video) => (
             <div
               key={video._id}
               className="aspect-video w-full cursor-pointer overflow-hidden rounded-2xl shadow-xl relative group transition-transform hover-scale-105"
