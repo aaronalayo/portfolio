@@ -1,7 +1,13 @@
 // src/components/VideosSection.tsx
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import imageUrlBuilder from '@sanity/image-url';
 import sanityClient from '../sanityClient';
+
+type SanityImageSource = unknown;
+const builder = imageUrlBuilder(sanityClient);
+type BuilderImageParam = Parameters<typeof builder.image>[0];
+const urlFor = (source: SanityImageSource) => builder.image(source as BuilderImageParam);
 
 interface Video {
   _id: string;
@@ -10,6 +16,7 @@ interface Video {
   slug: {
     current: string;
   };
+  thumbnail?: SanityImageSource;
 }
 
 const PAGE_SIZE = 6;
@@ -30,7 +37,7 @@ const VideosSection = () => {
     try {
       // We now only fetch videos where the slug's "current" property is defined.
       const query = `*[_type == "video" && defined(slug.current)] | order(_createdAt desc) [${start}...${start + PAGE_SIZE}] {
-        _id, title, vimeoId, slug
+        _id, title, vimeoId, slug, thumbnail
       }`;
       const data: Video[] = await sanityClient.fetch(query);
       
@@ -153,7 +160,15 @@ const VideosSection = () => {
                 }
               }}
             >
-              <img src={`https://vumbnail.com/${video.vimeoId}.jpg`} alt={video.title} className="w-full h-full object-cover" />
+              <img
+                src={
+                  video.thumbnail
+                    ? urlFor(video.thumbnail).width(800).height(450).format('webp').url()
+                    : `https://vumbnail.com/${video.vimeoId}.jpg`
+                }
+                alt={video.title}
+                className="w-full h-full object-cover"
+              />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 flex items-center justify-center transition">
                 <h3 className="text-white text-lg md:text-xl font-semibold px-4 text-center">{video.title}</h3>
               </div>
