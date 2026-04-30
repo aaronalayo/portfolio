@@ -35,6 +35,15 @@ export default defineType({
     }),
 
     defineField({
+      name: 'category',
+      title: 'Category',
+      type: 'string',
+      description:
+        'Free-text category (e.g. commercials, documentary, music videos, fashion, trailers).',
+      validation: (Rule) => Rule.required(),
+    }),
+
+    defineField({
       name: 'thumbnail',
       title: 'Custom Thumbnail (Optional)',
       type: 'image',
