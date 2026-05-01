@@ -60,9 +60,13 @@ export default defineType({
     }),
 
     defineField({
-      name: 'category',
-      title: 'Category',
-      type: 'string',
+      name: 'categories', // Renamed to plural for clarity
+      title: 'Categories',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: {
+        layout: 'tags', // This makes it look like nice tags in the Sanity Studio
+      },
     }),
     
     defineField({
