@@ -11,15 +11,9 @@ const urlFor = (source: SanityImageSource) => builder.image(source as BuilderIma
 interface Photo {
   _id: string;
   title: string;
-  category: string;
-  slug: {
-    current: string;
-  };
-  image: {
-    asset: {
-      url: string;
-    };
-  };
+  categories: string[]; // Change this from 'category: string'
+  slug: { current: string };
+  image: { asset: { url: string } };
 }
 
 const ALL_CATEGORY = 'All';
@@ -42,7 +36,7 @@ const PhotosSection = () => {
           _id,
           title,
           slug, 
-          category,
+          categories,
           image { asset -> { url } }
         }`
       )
@@ -55,16 +49,19 @@ const PhotosSection = () => {
 
   // 2. Derive Categories for the filter bar
   const categoryOptions = useMemo(() => {
-    const categories = allPhotos.map(p => p.category || 'Uncategorized');
-    return [ALL_CATEGORY, ...Array.from(new Set(categories))].sort();
+    // Extract all categories from all photos and flatten them into one big list
+    const allCategoryTags = allPhotos.flatMap(p => p.categories || ['Uncategorized']);
+    // Remove duplicates
+    return [ALL_CATEGORY, ...Array.from(new Set(allCategoryTags))].sort();
   }, [allPhotos]);
 
   // 3. Filter photos based on selection
   const filteredPhotos = useMemo(() => {
     if (selectedCategory === ALL_CATEGORY) return allPhotos;
-    return allPhotos.filter(p => (p.category || 'Uncategorized') === selectedCategory);
+    return allPhotos.filter(p => 
+      (p.categories || ['Uncategorized']).includes(selectedCategory)
+    );
   }, [allPhotos, selectedCategory]);
-
   // 4. Modal Handlers
   const openModal = useCallback((index: number, fromUrl = false) => {
     setSelectedIndex(index);
@@ -98,25 +95,26 @@ const PhotosSection = () => {
   // 5. URL Sync: This opens the modal AND sets the correct category filter automatically
   useEffect(() => {
     if (isLoaded && slug) {
-      const photoIndex = allPhotos.findIndex(p => p.slug.current === slug);
-      if (photoIndex !== -1) {
-        const photo = allPhotos[photoIndex];
-        const photoCategory = photo.category || 'Uncategorized';
+      const photo = allPhotos.find(p => p.slug.current === slug);
+      if (photo) {
+        const photoCategories = photo.categories || ['Uncategorized'];
         
-        // Match the filter to the photo's category so it exists in the current filteredPhotos set
-        setSelectedCategory(photoCategory);
-        
-        // Find its index within that filtered set
+        // If the currently selected category isn't one of this photo's categories,
+        // switch to the photo's first category so the Next/Prev buttons work.
+        if (!photoCategories.includes(selectedCategory) && selectedCategory !== ALL_CATEGORY) {
+          setSelectedCategory(photoCategories[0]);
+        }
+  
+        // Re-calculate index based on the (potentially updated) filtered list
         const indexInFiltered = allPhotos
-          .filter(p => (p.category || 'Uncategorized') === photoCategory)
+          .filter(p => selectedCategory === ALL_CATEGORY || (p.categories || ['Uncategorized']).includes(selectedCategory))
           .findIndex(p => p.slug.current === slug);
-
+  
         setSelectedIndex(indexInFiltered);
         setAnimateImage(true);
       }
     }
-  }, [slug, isLoaded, allPhotos]);
-
+  }, [slug, isLoaded, allPhotos, selectedCategory]);
   // 6. Keyboard Events
   useEffect(() => {
     const isModalOpen = !!slug;
