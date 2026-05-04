@@ -32,7 +32,7 @@ const PhotosSection = () => {
   useEffect(() => {
     sanityClient
       .fetch(
-        `*[_type == "photo" && defined(slug.current)]{
+        `*[_type == "photo" && defined(slug.current)] | order(categories[0] asc) {
           _id,
           title,
           slug, 
@@ -57,7 +57,16 @@ const PhotosSection = () => {
 
   // 3. Filter photos based on selection
   const filteredPhotos = useMemo(() => {
-    if (selectedCategory === ALL_CATEGORY) return allPhotos;
+    if (selectedCategory === ALL_CATEGORY) {
+      // Sort all photos by their first category so like-items are grouped together
+      return [...allPhotos].sort((a, b) => {
+        const catA = a.categories?.[0] || 'Uncategorized';
+        const catB = b.categories?.[0] || 'Uncategorized';
+        return catA.localeCompare(catB);
+      });
+    }
+    
+    // If a specific category is selected, just filter for it
     return allPhotos.filter(p => 
       (p.categories || ['Uncategorized']).includes(selectedCategory)
     );
