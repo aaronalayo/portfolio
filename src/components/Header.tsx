@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   HomeIcon,
   VideosIcon,
-  DeveloperIcon,
+  // DeveloperIcon, // TEMP: disabled
   PhotographyIcon,
   AboutIcon,
   ContactIcon,
@@ -40,7 +40,7 @@ const sections = [
   { label: 'Home', value: '/', icon: HomeIcon },
   { label: 'Editorial', value: '/videos', icon: VideosIcon },
   { label: 'Photography', value: '/photos', icon: PhotographyIcon },
-  { label: 'Dev Work', value: '/developer', icon: DeveloperIcon },
+  // TEMP: disabled — { label: 'Dev Work', value: '/developer', icon: DeveloperIcon },
   { label: 'About', value: '/about', icon: AboutIcon },
   { label: 'Contact', value: '/contact', icon: ContactIcon },
 ];

@@ -10,7 +10,7 @@ import RandomWorkSection from './components/RandomWorkSection';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import AboutSection from './components/AboutSection';
-import DeveloperWorkSection from './components/DeveloperWorkSection';
+// TEMP: disabled — import DeveloperWorkSection from './components/DeveloperWorkSection';
 import ContactSection from './components/ContactSection';
 import ModernCookieBanner from './components/ModernCookieBanner';
 
@@ -58,7 +58,7 @@ function App() {
             <Route path="/videos/:slug" element={<VideosSection />} />
             <Route path="/photos" element={<PhotosSection />} />
             <Route path="/photos/:slug" element={<PhotosSection />} />
-            <Route path="/developer" element={<DeveloperWorkSection />} />
+            {/* TEMP: disabled — <Route path="/developer" element={<DeveloperWorkSection />} /> */}
             <Route path="/about" element={<AboutSection />} />
             <Route path="/contact" element={<ContactSection />} />
           </Routes>
