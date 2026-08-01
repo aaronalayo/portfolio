@@ -79,10 +79,10 @@ const Footer = () => {
         {/* Email Address */}
         <div className="mb-4">
           <a 
-            href="mailto:hello@redmalanga.com?subject=Inquiry from your portfolio" 
+            href="mailto:hello@aaronalayo.com?subject=Inquiry from your portfolio" 
             className="text-gray-400 hover:text-white text-sm transition-colors"
           >
-            hello@redmalanga.com
+            hello@aaronalayo.com
           </a>
         </div>
         

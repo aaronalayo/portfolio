@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import sanityClient from '../sanityClient';
 import type { PortableTextBlock } from '@portabletext/types';
 import { PortableText } from '@portabletext/react';
+import { SITE_URL } from '../config/site';
 
 // --- (Your PortableText components object remains the same) ---
 const components = {
@@ -56,7 +57,7 @@ const DeveloperWorkSection = () => {
         name="description"
         content="Explore my software development projects, including work with React, TypeScript, and other modern web technologies."
       />
-      <link rel="canonical" href="https://redmalanga.com/developer" />
+      <link rel="canonical" href={`${SITE_URL}/developer`} />
 
       {/* --- Your original component JSX starts here, completely unchanged --- */}
       <section className="w-full py-20 px-4">

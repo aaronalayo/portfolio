@@ -1,6 +1,6 @@
 import {defineCliConfig} from 'sanity/cli'
 export default defineCliConfig({
-  studioHost: 'redmalanga',
+  studioHost: 'aaronalayo',
   api: {
     projectId: 'or9vpa2z',
     dataset: 'production',

@@ -5,6 +5,7 @@ import sanityClient from '../sanityClient';
 import imageUrlBuilder from '@sanity/image-url';
 import type { PortableTextBlock } from '@portabletext/types';
 import { PortableText } from '@portabletext/react';
+import { SITE_URL } from '../config/site';
 
 const builder = imageUrlBuilder(sanityClient);
 type BuilderImageParam = Parameters<typeof builder.image>[0];
@@ -45,7 +46,7 @@ const AboutSection = () => {
     <>
       <title>About Me - Red Malanga</title>
       <meta name="description" content="Learn more about my background, skills, and creative journey in development, video production, and photography." />
-      <link rel="canonical" href="https://redmalanga.com/about" />
+      <link rel="canonical" href={`${SITE_URL}/about`} />
 
       <section className="w-full bg-white px-4 md:px-6 py-20 flex justify-center items-center">
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 max-w-5xl w-full">

@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { SITE_URL } from '../config/site';
 
 // --- This is the INNER component that contains the form logic and UI ---
 const ContactForm = () => {
@@ -135,7 +136,7 @@ const ContactSection = () => (
   <>
     <title>Contact Me - Red Malanga</title>
     <meta name="description" content="Get in touch for collaborations, questions, or project inquiries." />
-    <link rel="canonical" href="https://redmalanga.com/contact" />
+    <link rel="canonical" href={`${SITE_URL}/contact`} />
 
     <section className="w-full flex flex-col px-6 py-20 items-center justify-center">
       <h2 className="text-2xl font-bold mb-6 text-center uppercase tracking-tight drop-shadow-sm">Contact</h2>

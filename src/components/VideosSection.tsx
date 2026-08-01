@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import imageUrlBuilder from '@sanity/image-url';
 import sanityClient from '../sanityClient';
+import { SITE_URL } from '../config/site';
 
 type SanityImageSource = unknown;
 const builder = imageUrlBuilder(sanityClient);
@@ -171,13 +172,13 @@ const VideosSection = () => {
         <>
           <title>{`${selectedVideo.title} - Video by Red Malanga`}</title>
           <meta name="description" content={`Watch the video titled "${selectedVideo.title}" from the creative portfolio of Red Malanga.`} />
-          <link rel="canonical" href={`https://redmalanga.com/videos/${selectedVideo.slug.current}`} />
+          <link rel="canonical" href={`${SITE_URL}/videos/${selectedVideo.slug.current}`} />
         </>
       ) : (
         <>
           <title>Video & Editorial Work - Red Malanga - Aaron ALAYO</title>
           <meta name="description" content="A collection of professional video and editorial work. View my portfolio of creative video projects." />
-          <link rel="canonical" href="https://redmalanga.com/videos" />
+          <link rel="canonical" href={`${SITE_URL}/videos`} />
         </>
       )}
 

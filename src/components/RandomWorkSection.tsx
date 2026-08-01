@@ -1,6 +1,7 @@
 // src/components/RandomWorkSection.tsx
 import { useEffect, useState, useRef } from 'react';
 import sanityClient from '../sanityClient';
+import { SITE_URL } from '../config/site';
 import Player from '@vimeo/player';
 
 // --- (Your icons and other components remain the same) ---
@@ -41,7 +42,7 @@ const RandomWorkSection = () => {
     <>
       <title>Red Malanga - Aaron ALAYO - Creative Portfolio</title>
       <meta name="description" content="Welcome to the creative portfolio of Aaron Alayo. Explore a curated collection of professional work in photography, video production, and software development." />
-      <link rel="canonical" href="https://redmalanga.com/" />
+      <link rel="canonical" href={`${SITE_URL}/`} />
 
       <section className="relative w-full h-screen overflow-hidden bg-black flex items-center justify-center">
         {loading && ( <div className="absolute inset-0 flex items-center justify-center z-30 bg-black"><StarLoader /></div> )}
