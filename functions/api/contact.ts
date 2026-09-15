@@ -12,11 +12,18 @@ export interface Env {
   VITE_RECAPTCHA_SECRET?: string
 }
 
+interface ContactRequest {
+  name?: string
+  email?: string
+  message?: string
+  recaptchaToken?: string
+}
+
 export const onRequestPost = async (
   { request, env }: { request: Request; env: Env }
 ) => {
   try {
-    const body = (await request.json()) as any
+    const body = (await request.json()) as ContactRequest
     const { name, email, message, recaptchaToken } = body
 
     if (!name || !email || !message) {
@@ -41,9 +48,17 @@ export const onRequestPost = async (
         response: recaptchaToken,
       }),
     })
-    const verifyJson = (await verifyRes.json()) as { success?: boolean; score?: number; action?: string }
+    const verifyJson = (await verifyRes.json()) as {
+      success?: boolean
+      score?: number
+      action?: string
+      'error-codes'?: string[]
+    }
     if (!verifyJson.success || (typeof verifyJson.score === 'number' && verifyJson.score < 0.5)) {
-      return new Response(JSON.stringify({ error: 'reCAPTCHA verification failed' }), { status: 403 })
+      return new Response(JSON.stringify({
+        error: 'reCAPTCHA verification failed',
+        errorCodes: verifyJson['error-codes'] ?? [],
+      }), { status: 403 })
     }
 
     // Write to Sanity with server-side token

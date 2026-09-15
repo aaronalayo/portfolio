@@ -51,12 +51,11 @@ const ContactForm = () => {
 
   try {
       const token = await executeRecaptcha('contactForm');
-      const submissionData = { ...submissionObject, 'g-recaptcha-response': token };
 
       const formspreeResponse = await fetch('https://formspree.io/f/mgvzqzbl', { // <-- PASTE YOUR FORM ID
         method: 'POST',
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-        body: JSON.stringify(submissionData),
+        body: JSON.stringify(submissionObject),
       });
 
       if (!formspreeResponse.ok) { 

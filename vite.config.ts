@@ -11,7 +11,7 @@ export default defineConfig(
   server: {
     host: '0.0.0.0', // ✅ required for Docker
     port: 3000,
-    allowedHosts: ['portfolio-f412.onrender.com', 'localhost'],
+    allowedHosts: ['portfolio-f412.onrender.com', 'aaronalayo.com', 'localhost'],
   },
   resolve: {
     alias: {
